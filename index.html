@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Catalog</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --card:#ffffff;
+      --accent:#111827;
+      --pill:#111827;
+      --pillText:#ffffff;
+      --price:#1d4ed8;
+      --shadow: 0 10px 25px rgba(0,0,0,.06);
+      --radius: 14px;
+      --max: 1200px;
+      --gap: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      text-decoration:none;
+      color:inherit;
+    }
+    .brand-mark{
+      width:34px;height:34px;
+      border-radius:10px;
+      background:linear-gradient(135deg,#111827,#4b5563);
+    }
+    .brand-text{
+      display:flex; flex-direction:column; line-height:1.1;
+    }
+    .brand-text b{ font-size:14px; letter-spacing:.2px; }
+    .brand-text span{ font-size:12px; color:var(--muted); }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .icon-btn{
+      width:40px;height:40px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+    .icon-btn:active{ transform: translateY(1px); }
+    .icon{
+      width:18px;height:18px;
+      fill:none;
+      stroke:#111827;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    /* Layout */
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 16px 60px;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin:14px 0 16px;
+    }
+
+    .filters{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .chip{
+      border:1px solid var(--border);
+      background:#fff;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      cursor:pointer;
+      color:var(--text);
+    }
+    .chip[data-active="true"]{
+      border-color:#111827;
+      box-shadow: 0 0 0 2px rgba(17,24,39,.08) inset;
+      font-weight:600;
+    }
+
+    .search{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      min-width: min(420px, 100%);
+    }
+    .search input{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none;
+      font-size:14px;
+    }
+
+    /* Grid */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:var(--gap);
+    }
+    @media (max-width: 1050px){
+      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 760px){
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .search{ min-width:100%; }
+    }
+    @media (max-width: 440px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    /* Product card */
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:var(--card);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height: 320px;
+    }
+    .thumb{
+      position:relative;
+      aspect-ratio: 4 / 3;
+      background:#f3f4f6;
+      overflow:hidden;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.02);
+    }
+    .badge{
+      position:absolute;
+      top:12px; left:12px;
+      background:rgba(255,255,255,.95);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+
+    .card-body{
+      padding:14px 14px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex:1;
+    }
+    .title{
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size:16px;
+      margin:0;
+    }
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .price{
+      margin-top:auto;
+      font-weight:800;
+      color:var(--price);
+      font-size:16px;
+    }
+    .card-footer{
+      padding:0 14px 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .coa{
+      font-size:13px;
+      text-decoration:none;
+      color:#111827;
+      border-bottom: 1px dashed rgba(17,24,39,.35);
+      padding-bottom:2px;
+    }
+    .coa:hover{ opacity:.85; }
+
+    .view{
+      font-size:13px;
+      border:1px solid var(--border);
+      background:#fff;
+      padding:9px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+
+    /* Simple modal (for “view” only, no checkout) */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:100;
+    }
+    .modal{
+      width:min(860px, 100%);
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+    }
+    @media (max-width: 840px){
+      .modal{ grid-template-columns: 1fr; }
+    }
+    .modal-media{
+      background:#f3f4f6;
+      min-height:320px;
+    }
+    .modal-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .modal-content{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .modal-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+    }
+    .close{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      width:40px;height:40px;
+      cursor:pointer;
+    }
+    .modal-muted{ color:var(--muted); font-size:13px; }
+    .modal-price{ font-weight:900; color:var(--price); font-size:18px; }
+    .note{
+      background:#f9fafb;
+      border:1px solid var(--border);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      color:#374151;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#" aria-label="Home">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-text">
+          <b>YOUR STORE NAME</b>
+          <span>Research catalog (no checkout)</span>
+        </div>
+      </a>
+
+      <div class="actions">
+        <button class="icon-btn" id="openSearch" title="Search">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M21 21l-4.3-4.3"></path>
+          </svg>
+        </button>
+        <button class="icon-btn" title="Cart (disabled)">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6h15l-2 9H7L6 6Z"></path>
+            <path d="M6 6 5 3H2"></path>
+            <circle cx="9" cy="20" r="1"></circle>
+            <circle cx="18" cy="20" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <div class="filters" id="filters"></div>
+
+      <div class="search" id="searchBar">
+        <input id="searchInput" type="search" placeholder="Search products (name, mg, tags)..." />
+      </div>
+    </div>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <!-- Modal (view only) -->
+  <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="modal">
+      <div class="modal-media">
+        <img id="modalImg" alt="" />
+      </div>
+      <div class="modal-content">
+        <div class="modal-top">
+          <div>
+            <h3 class="modal-title" id="modalTitle"></h3>
+            <div class="modal-muted" id="modalMeta"></div>
+          </div>
+          <button class="close" id="closeModal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-price" id="modalPrice"></div>
+        <a class="coa" id="modalCoa" href="#" target="_blank" rel="noreferrer">View COA</a>
+        <div class="note">
+          Checkout is intentionally disabled. Use this page as a catalog and link out to COAs.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * 2) EDIT YOUR PRODUCTS HERE
+     * - image: can be a local file path like "images/bpc-157.jpg" or a full URL
+     * - coaUrl: link to your COA PDF/page
+     * - priceText: "$35.00 – $135.00" or "$20.00"
+     * - mg: shown as metadata (optional)
+     * - tags: used for filtering/search (optional)
+     * - soldOut: shows badge (optional)
+     */
+    const products = [
+      {
+        id: "p1",
+        name: "Hospira Bac Water",
+        mg: "30mL",
+        priceText: "$20.00",
+        image: "https://images.unsplash.com/photo-1582719478185-2bb3c78f6b04?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["supplies", "water"],
+        soldOut: false
+      },
+      {
+        id: "p2",
+        name: "5-AMINO",
+        mg: "10mg",
+        priceText: "$40.00 – $255.00",
+        image: "https://images.unsplash.com/photo-1514361892635-e48c4c2b1d9b?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide", "popular"],
+        soldOut: false
+      },
+      {
+        id: "p3",
+        name: "AOD",
+        mg: "5mg",
+        priceText: "$30.00 – $150.00",
+        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide"],
+        soldOut: true
+      },
+      {
+        id: "p4",
+        name: "BPC-157",
+        mg: "10mg",
+        priceText: "$35.00 – $135.00",
+        image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide"],
+        soldOut: true
+      },
+      {
+        id: "p5",
+        name: "Cagrilintide",
+        mg: "5mg",
+        priceText: "$—",
+        image: "https://images.unsplash.com/photo-1520975958225-9d6bbf8f07f7?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide"],
+        soldOut: false
+      },
+      {
+        id: "p6",
+        name: "CJC / IPA",
+        mg: "10mg",
+        priceText: "$—",
+        image: "https://images.unsplash.com/photo-1612538498456-e861df91d4d0?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide"],
+        soldOut: false
+      },
+      {
+        id: "p7",
+        name: "DSIP",
+        mg: "10mg",
+        priceText: "$—",
+        image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide"],
+        soldOut: true
+      },
+      {
+        id: "p8",
+        name: "GHK-Cu",
+        mg: "50mg",
+        priceText: "$—",
+        image: "https://images.unsplash.com/photo-1520975693410-001d05d6f5c3?auto=format&fit=crop&w=1400&q=60",
+        coaUrl: "#",
+        tags: ["peptide"],
+        soldOut: false
+      }
+    ];
+
+    // Derived categories from tags (simple, editable)
+    const categoryConfig = [
+      { key: "all", label: "All" },
+      { key: "peptide", label: "Peptides" },
+      { key: "supplies", label: "Supplies" },
+      { key: "popular", label: "Popular" }
+    ];
+
+    const grid = document.getElementById("grid");
+    const filtersEl = document.getElementById("filters");
+    const searchInput = document.getElementById("searchInput");
+    const openSearch = document.getElementById("openSearch");
+    const searchBar = document.getElementById("searchBar");
+
+    const backdrop = document.getElementById("backdrop");
+    const closeModal = document.getElementById("closeModal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalMeta = document.getElementById("modalMeta");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalCoa = document.getElementById("modalCoa");
+
+    let activeCategory = "all";
+    let query = "";
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    function matchesCategory(p){
+      if(activeCategory === "all") return true;
+      return (p.tags || []).includes(activeCategory);
+    }
+
+    function matchesQuery(p){
+      if(!query.trim()) return true;
+      const hay = [
+        p.name, p.mg, p.priceText, ...(p.tags || [])
+      ].join(" ").toLowerCase();
+      return hay.includes(query.trim().toLowerCase());
+    }
+
+    function renderFilters(){
+      filtersEl.innerHTML = categoryConfig.map(c => {
+        const active = c.key === activeCategory ? "true" : "false";
+        return `<button class="chip" data-key="${c.key}" data-active="${active}">${escapeHtml(c.label)}</button>`;
+      }).join("");
+
+      filtersEl.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeCategory = btn.dataset.key;
+          renderFilters();
+          renderGrid();
+        });
+      });
+    }
+
+    function cardTemplate(p){
+      const badge = p.soldOut ? `<div class="badge">SOLD<br>OUT</div>` : "";
+      const metaParts = [];
+      if(p.mg) metaParts.push(p.mg);
+      if(p.tags && p.tags.length) metaParts.push(p.tags.map(t => `#${t}`).join(" "));
+      const meta = metaParts.join(" • ");
+
+      return `
+        <article class="card">
+          <div class="thumb">
+            ${badge}
+            <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" />
+          </div>
+          <div class="card-body">
+            <h3 class="title">${escapeHtml(p.name)}</h3>
+            <div class="meta">${escapeHtml(meta)}</div>
+            <div class="price">${escapeHtml(p.priceText || "")}</div>
+          </div>
+          <div class="card-footer">
+            <a class="coa" href="${escapeHtml(p.coaUrl || "#")}" target="_blank" rel="noreferrer">View COA</a>
+            <button class="view" data-id="${escapeHtml(p.id)}">View</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderGrid(){
+      const filtered = products.filter(p => matchesCategory(p) && matchesQuery(p));
+      grid.innerHTML = filtered.map(cardTemplate).join("");
+
+      grid.querySelectorAll(".view").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const p = products.find(x => x.id === btn.dataset.id);
+          if(!p) return;
+          openModal(p);
+        });
+      });
+    }
+
+    function openModal(p){
+      modalImg.src = p.image;
+      modalImg.alt = p.name;
+      modalTitle.textContent = p.name;
+      modalMeta.textContent = [p.mg, ...(p.tags || []).map(t => `#${t}`)].filter(Boolean).join(" • ");
+      modalPrice.textContent = p.priceText || "";
+      modalCoa.href = p.coaUrl || "#";
+      backdrop.style.display = "flex";
+    }
+    function hideModal(){
+      backdrop.style.display = "none";
+    }
+
+    // Search
+    searchInput.addEventListener("input", (e) => {
+      query = e.target.value;
+      renderGrid();
+    });
+
+    openSearch.addEventListener("click", () => {
+      searchInput.focus();
+      searchBar.scrollIntoView({ behavior:"smooth", block:"center" });
+    });
+
+    // Modal events
+    closeModal.addEventListener("click", hideModal);
+    backdrop.addEventListener("click", (e) => {
+      if(e.target === backdrop) hideModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") hideModal();
+    });
+
+    // Init
+    renderFilters();
+    renderGrid();
+  </script>
+</body>
+</html>
