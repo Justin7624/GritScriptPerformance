@@ -7,18 +7,18 @@
 
   <style>
     :root{
-      /* Theme (matched to your header) */
-      --bg:#07090b;          /* near-black */
-      --text:#e5e7eb;        /* light text */
-      --muted:#9aa3ad;       /* muted gray */
-      --border:#1c232c;      /* dark border */
+      /* Core */
+      --bg:#050607;          /* near-black */
+      --text:#e5e7eb;
+      --muted:#9aa3ad;
+      --border:#1c232c;
       --shadow: 0 18px 40px rgba(0,0,0,.55);
       --radius: 14px;
       --max: 1240px;
       --gap: 18px;
 
-      /* Accents */
-      --accent:#c1121f;      /* red accent */
+      /* Accent */
+      --accent:#c1121f;      /* red */
       --chip:#0b0f13;
       --chipActive:#101720;
     }
@@ -26,7 +26,6 @@
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
 
-    /* Smooth, continuous gradient that doesn't "band" on scroll */
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -34,31 +33,55 @@
       background: var(--bg);
       overflow-x:hidden;
     }
-    /* Put gradient on a fixed layer so it stays consistent while scrolling */
+
+    /* Black cascading to red (consistent on PC + phone) */
     body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      /* Strong black top -> subtle deep red bottom */
+      background:
+        linear-gradient(180deg,
+          #040506 0%,
+          #060709 38%,
+          #060709 60%,
+          rgba(80, 8, 14, 0.65) 100%
+        );
+    }
+
+    /* Subtle glow layer (kept controlled so it doesn't turn fully red on phones) */
+    body::after{
       content:"";
       position:fixed;
       inset:0;
       z-index:-1;
       background:
-        radial-gradient(1200px 800px at 12% 0%, rgba(193,18,31,.18), transparent 60%),
-        radial-gradient(900px 700px at 95% 10%, rgba(148,163,184,.12), transparent 55%),
-        radial-gradient(1100px 900px at 50% 110%, rgba(193,18,31,.14), transparent 60%),
-        linear-gradient(180deg, #050607 0%, #07090b 45%, #06080a 100%);
-    }
-    /* Extra subtle gradient near page bottom so it feels "richer" as you scroll */
-    .page-glow{
-      position:absolute;
-      left:0; right:0;
-      top:65vh;
-      height:160vh;
-      z-index:-2;
-      background:
-        radial-gradient(900px 700px at 50% 70%, rgba(193,18,31,.10), transparent 60%);
+        radial-gradient(900px 600px at 12% 6%, rgba(229,231,235,.06), transparent 60%),
+        radial-gradient(900px 700px at 85% 12%, rgba(193,18,31,.10), transparent 62%),
+        radial-gradient(1100px 900px at 50% 110%, rgba(193,18,31,.16), transparent 62%);
       pointer-events:none;
     }
 
-    /* Thin, full-width header banner (NO cropping) */
+    /* Reduce red intensity on small screens so it never looks "fully red" */
+    @media (max-width: 640px){
+      body::after{
+        background:
+          radial-gradient(800px 520px at 12% 6%, rgba(229,231,235,.05), transparent 62%),
+          radial-gradient(800px 600px at 85% 12%, rgba(193,18,31,.07), transparent 64%),
+          radial-gradient(900px 760px at 50% 112%, rgba(193,18,31,.10), transparent 66%);
+      }
+      body::before{
+        background:
+          linear-gradient(180deg,
+            #040506 0%,
+            #060709 50%,
+            rgba(65, 6, 10, 0.55) 100%
+          );
+      }
+    }
+
+    /* Header (thin, full-width, NOT cropped) */
     .hero{
       width:100%;
       border-bottom:1px solid var(--border);
@@ -67,7 +90,7 @@
     .hero-inner{ width:100%; padding:10px 0 12px; }
     .hero-banner{
       width:100%;
-      height:84px; /* thinner + readable */
+      height:84px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -78,7 +101,7 @@
     .hero-banner img{
       height:100%;
       width:min(1400px, 100%);
-      object-fit:contain; /* no cutoff */
+      object-fit:contain;
       object-position:center;
       display:block;
       padding:6px 14px;
@@ -92,7 +115,6 @@
       max-width:var(--max);
       margin:0 auto;
       padding:18px 16px 90px;
-      position:relative;
     }
 
     .toolbar{
@@ -194,6 +216,7 @@
       transform: scale(1.02);
       filter: contrast(1.02) saturate(.95);
     }
+
     .badge{
       position:absolute;
       top:12px; left:12px;
@@ -282,10 +305,9 @@
       background: rgba(0,0,0,.55);
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
-      touch-action:none; /* reduce scroll/pinch through backdrop */
+      touch-action:none;
     }
 
-    /* modal container */
     .modal{
       width:min(1120px, 100%);
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -295,21 +317,17 @@
       box-shadow: 0 25px 70px rgba(0,0,0,.65);
       display:grid;
       grid-template-columns: 1.25fr 1fr;
-      max-height: min(86vh, 900px); /* important for phones */
+      max-height: min(86vh, 900px);
     }
 
-    /* Ensure modal scrolls internally on phones */
     .modal-media,
-    .modal-content{
-      min-height:0;
-    }
+    .modal-content{ min-height:0; }
 
     .modal-media{
       position:relative;
       background:#07090b;
       border-right:1px solid rgba(255,255,255,.08);
     }
-
     .modal-media img{
       width:100%;
       height:100%;
@@ -317,7 +335,6 @@
       display:block;
       filter: contrast(1.02) saturate(.95);
     }
-
     .modal-badge{
       position:absolute;
       top:14px;
@@ -337,7 +354,7 @@
       display:flex;
       flex-direction:column;
       gap:12px;
-      overflow:auto;               /* <- scroll inside modal on phone */
+      overflow:auto;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -434,7 +451,6 @@
       color: rgba(229,231,235,.85);
     }
 
-    /* Phone-first modal layout: stack image above content */
     @media (max-width: 900px){
       .modal{
         grid-template-columns: 1fr;
@@ -443,13 +459,12 @@
       .modal-media{
         border-right:none;
         border-bottom:1px solid rgba(255,255,255,.08);
-        height: 42vh; /* visible product image but not huge */
+        height: 42vh;
       }
       .modal-title{ font-size:28px; }
       .modal-price{ font-size:24px; }
     }
 
-    /* When modal open: lock page scrolling */
     body.modal-open{
       overflow:hidden;
       height:100%;
@@ -459,8 +474,6 @@
 </head>
 
 <body>
-  <div class="page-glow" aria-hidden="true"></div>
-
   <!-- Thin full-width banner header (scaled, not cropped) -->
   <header class="hero">
     <div class="hero-inner">
@@ -492,7 +505,7 @@
       <div class="modal-content">
         <div class="modal-top">
           <div>
-            <div class="crumbs" id="modalCrumbs">Home / Uncategorized /</div>
+            <div class="crumbs" id="modalCrumbs">Home / Peptides /</div>
             <h3 class="modal-title" id="modalTitle"></h3>
           </div>
           <button class="close" id="closeModal" aria-label="Close">✕</button>
@@ -523,68 +536,63 @@
   </div>
 
   <script>
+    // Placeholder image & COA until you drop real ones into the repo
+    const PLACEHOLDER_IMG = "images/placeholder.jpg"; // put a placeholder here, or replace per product
+    const PLACEHOLDER_COA = "#";
+
+    /**
+     * PRODUCTS
+     * - Prices are placeholders (0 => shown as $—).
+     * - Images/COAs are placeholders.
+     * - Display order is forced alphabetical in renderGrid().
+     */
     const products = [
-      {
-        id: "bpc-157",
-        name: "BPC-157",
-        category: "Uncategorized",
-        sku: "GS-BPC157",
-        image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["peptide"],
-        soldOut: true,
-        variants: [
-          { label: "Single (10mg)", price: 35.00 },
-          { label: "Full-Kit (10 Vials)", price: 135.00 }
-        ]
-      },
-      {
-        id: "aod",
-        name: "AOD",
-        category: "Uncategorized",
-        sku: "GS-AOD",
-        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["peptide"],
-        soldOut: false,
-        variants: [
-          { label: "Single (5mg)", price: 30.00 },
-          { label: "2-Pack (5mg)", price: 55.00 },
-          { label: "Full-Kit (10 Vials)", price: 150.00 }
-        ]
-      },
-      {
-        id: "bac-water",
-        name: "Bacteriostatic Water",
-        category: "Supplies",
-        sku: "GS-BACW30",
-        image: "https://images.unsplash.com/photo-1582719478185-2bb3c78f6b04?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["supplies"],
-        soldOut: false,
-        variants: [
-          { label: "30mL (Single)", price: 20.00 }
-        ]
-      },
-      {
-        id: "ghk-cu",
-        name: "GHK-Cu",
-        category: "Uncategorized",
-        sku: "GS-GHKCU50",
-        image: "https://images.unsplash.com/photo-1520975693410-001d05d6f5c3?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["peptide"],
-        soldOut: false,
-        variants: [
-          { label: "Single (50mg)", price: 0.00 } // placeholder
-        ]
-      }
+      { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", sku:"GS-CAGRILINTIDE", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"5mg", price:0} ] },
+
+      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", sku:"GS-GHKCU", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"50mg", price:0}, {label:"100mg", price:0} ] },
+
+      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", sku:"GS-GLP3RT", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"15mg", price:0}, {label:"20mg", price:0} ] },
+
+      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", sku:"GS-GLP2TZ", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"klow", name:"KLOW", category:"Peptides", sku:"GS-KLOW", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"80mg", price:0} ] },
+
+      { id:"kpv", name:"KPV", category:"Peptides", sku:"GS-KPV", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"mots-c", name:"MOTS-C", category:"Peptides", sku:"GS-MOTSC", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"nad-plus", name:"NAD+", category:"Peptides", sku:"GS-NADPLUS", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"1,000mg", price:0} ] },
+
+      { id:"selank", name:"Selank", category:"Peptides", sku:"GS-SELANK", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"semax", name:"Semax", category:"Peptides", sku:"GS-SEMAX", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"ss-31", name:"SS-31", category:"Peptides", sku:"GS-SS31", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", sku:"GS-TESAMORELIN", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
+        variants:[ {label:"10mg", price:0} ] },
+
+      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", sku:"GS-WOLVERINE", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide","stack"], soldOut:false,
+        variants:[ {label:"10mg", price:0}, {label:"20mg", price:0} ] },
     ];
 
     const categoryConfig = [
       { key: "all", label: "All" },
-      { key: "peptide", label: "Peptides" },
-      { key: "supplies", label: "Supplies" },
+      { key: "peptide", label: "Peptides" }
     ];
 
     const grid = document.getElementById("grid");
@@ -685,7 +693,11 @@
     }
 
     function renderGrid(){
-      const filtered = products.filter(p => matchesCategory(p) && matchesQuery(p));
+      const filtered = products
+        .filter(p => matchesCategory(p) && matchesQuery(p))
+        .slice()
+        .sort((a,b) => a.name.localeCompare(b.name, undefined, { sensitivity:"base" })); // alphabetical
+
       grid.innerHTML = filtered.map(cardTemplate).join("");
 
       grid.querySelectorAll(".view").forEach(btn => {
@@ -704,12 +716,6 @@
       modalPrice.textContent = formatMoney(v.price);
     }
 
-    /* Accessibility + mobile usability:
-       - lock body scroll
-       - blur backdrop
-       - prevent interacting with page underneath (backdrop covers whole screen)
-       - allow ESC to close
-    */
     function openModal(p){
       activeProduct = p;
 
@@ -741,8 +747,6 @@
 
       document.body.classList.add("modal-open");
       backdrop.style.display = "flex";
-
-      // Focus close button for keyboard users
       setTimeout(() => closeModal.focus(), 0);
     }
 
@@ -764,12 +768,10 @@
 
     closeModal.addEventListener("click", hideModal);
 
-    // Click outside modal closes
     backdrop.addEventListener("click", (e) => {
       if(e.target === backdrop) hideModal();
     });
 
-    // ESC closes
     document.addEventListener("keydown", (e) => {
       if(e.key === "Escape" && backdrop.style.display === "flex") hideModal();
     });
