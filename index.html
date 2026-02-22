@@ -259,17 +259,8 @@
       display:flex;
       gap:10px;
       align-items:center;
-      justify-content:space-between;
+      justify-content:flex-end; /* since COA removed */
     }
-
-    .coa{
-      font-size:13px;
-      text-decoration:none;
-      color: rgba(229,231,235,.92);
-      border-bottom: 1px dashed rgba(193,18,31,.55);
-      padding-bottom:2px;
-    }
-    .coa:hover{ color:#fff; border-bottom-color: rgba(193,18,31,.95); }
 
     .view{
       font-size:13px;
@@ -554,10 +545,6 @@
           <ul class="benefits" id="modalBenefits"></ul>
         </div>
 
-        <div class="row" style="gap:12px;">
-          <a class="coa" id="modalCoa" href="#" target="_blank" rel="noreferrer">View COA</a>
-        </div>
-
         <div class="info">
           <div class="kv"><b>SKU:</b> <span id="modalSku"></span></div>
           <div class="kv"><b>Category:</b> <span id="modalCategory"></span></div>
@@ -573,7 +560,6 @@
 
   <script>
     const PLACEHOLDER_IMG = "images/placeholder.jpg";
-    const PLACEHOLDER_COA = "#";
 
     const benefitsMap = {
       "BPC-157": [
@@ -648,49 +634,49 @@
       ]
     };
 
-    // Products + PRICES (as requested)
+    // Products + PRICES
     // NOTE: Display order is forced alphabetical in renderGrid().
     const products = [
-      { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:25} ] },
 
-      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", sku:"GS-CAGRILINTIDE", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", sku:"GS-CAGRILINTIDE", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"5mg", price:40} ] },
 
-      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", sku:"GS-GHKCU", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", sku:"GS-GHKCU", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"50mg", price:35}, {label:"100mg", price:50} ] },
 
-      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", sku:"GS-GLP3RT", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", sku:"GS-GLP3RT", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"15mg", price:65}, {label:"20mg", price:80} ] },
 
-      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", sku:"GS-GLP2TZ", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", sku:"GS-GLP2TZ", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:50} ] },
 
-      { id:"klow", name:"KLOW", category:"Peptides", sku:"GS-KLOW", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"klow", name:"KLOW", category:"Peptides", sku:"GS-KLOW", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"80mg", price:85} ] },
 
-      { id:"kpv", name:"KPV", category:"Peptides", sku:"GS-KPV", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"kpv", name:"KPV", category:"Peptides", sku:"GS-KPV", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"mots-c", name:"MOTS-C", category:"Peptides", sku:"GS-MOTSC", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"mots-c", name:"MOTS-C", category:"Peptides", sku:"GS-MOTSC", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"nad-plus", name:"NAD+", category:"Peptides", sku:"GS-NADPLUS", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"nad-plus", name:"NAD+", category:"Peptides", sku:"GS-NADPLUS", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"1000mg", price:50} ] },
 
-      { id:"selank", name:"Selank", category:"Peptides", sku:"GS-SELANK", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"selank", name:"Selank", category:"Peptides", sku:"GS-SELANK", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"semax", name:"Semax", category:"Peptides", sku:"GS-SEMAX", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"semax", name:"Semax", category:"Peptides", sku:"GS-SEMAX", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"ss-31", name:"SS-31", category:"Peptides", sku:"GS-SS31", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"ss-31", name:"SS-31", category:"Peptides", sku:"GS-SS31", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:45} ] },
 
-      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", sku:"GS-TESAMORELIN", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", sku:"GS-TESAMORELIN", image:PLACEHOLDER_IMG, tags:["peptide"],
         variants:[ {label:"10mg", price:45} ] },
 
-      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", sku:"GS-WOLVERINE", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide","stack"],
+      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", sku:"GS-WOLVERINE", image:PLACEHOLDER_IMG, tags:["peptide","stack"],
         variants:[ {label:"10mg", price:35}, {label:"20mg", price:60} ] },
     ];
 
@@ -709,7 +695,6 @@
     const modalTitle = document.getElementById("modalTitle");
     const modalCrumbs = document.getElementById("modalCrumbs");
     const modalPrice = document.getElementById("modalPrice");
-    const modalCoa = document.getElementById("modalCoa");
     const modalSku = document.getElementById("modalSku");
     const modalCategory = document.getElementById("modalCategory");
     const modalTags = document.getElementById("modalTags");
@@ -786,7 +771,6 @@
             <div class="price">${escapeHtml(priceRangeText(p))}</div>
           </div>
           <div class="card-footer">
-            <a class="coa" href="${escapeHtml(p.coaUrl || "#")}" target="_blank" rel="noreferrer">View COA</a>
             <button class="view" data-id="${escapeHtml(p.id)}">View</button>
           </div>
         </article>
@@ -829,7 +813,6 @@
       modalSku.textContent = p.sku || "—";
       modalCategory.textContent = cat;
       modalTags.textContent = (p.tags && p.tags.length) ? p.tags.map(t => `#${t}`).join(" ") : "";
-      modalCoa.href = p.coaUrl || "#";
 
       renderBenefitsForProductName(p.name);
 
