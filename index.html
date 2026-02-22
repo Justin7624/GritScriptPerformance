@@ -7,8 +7,7 @@
 
   <style>
     :root{
-      /* Core */
-      --bg:#050607;          /* near-black */
+      --bg:#050607;
       --text:#e5e7eb;
       --muted:#9aa3ad;
       --border:#1c232c;
@@ -16,9 +15,7 @@
       --radius: 14px;
       --max: 1240px;
       --gap: 18px;
-
-      /* Accent */
-      --accent:#c1121f;      /* red */
+      --accent:#c1121f;
       --chip:#0b0f13;
       --chipActive:#101720;
     }
@@ -40,7 +37,6 @@
       position:fixed;
       inset:0;
       z-index:-2;
-      /* Strong black top -> subtle deep red bottom */
       background:
         linear-gradient(180deg,
           #040506 0%,
@@ -50,7 +46,7 @@
         );
     }
 
-    /* Subtle glow layer (kept controlled so it doesn't turn fully red on phones) */
+    /* Controlled glow layer */
     body::after{
       content:"";
       position:fixed;
@@ -63,7 +59,6 @@
       pointer-events:none;
     }
 
-    /* Reduce red intensity on small screens so it never looks "fully red" */
     @media (max-width: 640px){
       body::after{
         background:
@@ -90,7 +85,7 @@
     .hero-inner{ width:100%; padding:10px 0 12px; }
     .hero-banner{
       width:100%;
-      height:150px;
+      height:84px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -426,9 +421,35 @@
       box-shadow: 0 0 0 3px rgba(193,18,31,.12);
     }
 
-    .info{
+    .section{
       border-top:1px solid rgba(255,255,255,.10);
       margin-top:6px;
+      padding-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .benefits-title{
+      font-weight:950;
+      letter-spacing:.2px;
+      margin:0;
+      font-size:14px;
+      color:#fff;
+    }
+
+    .benefits{
+      margin:0;
+      padding-left:18px;
+      color: rgba(229,231,235,.92);
+      line-height:1.35;
+      font-size:14px;
+    }
+    .benefits li{ margin:6px 0; }
+
+    .info{
+      border-top:1px solid rgba(255,255,255,.10);
+      margin-top:2px;
       padding-top:12px;
       display:flex;
       flex-direction:column;
@@ -474,7 +495,6 @@
 </head>
 
 <body>
-  <!-- Thin full-width banner header (scaled, not cropped) -->
   <header class="hero">
     <div class="hero-inner">
       <div class="hero-banner">
@@ -494,7 +514,6 @@
     <section class="grid" id="grid"></section>
   </main>
 
-  <!-- Product page modal -->
   <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-label="Product details">
     <div class="modal" role="document">
       <div class="modal-media">
@@ -518,6 +537,12 @@
           <select id="variantSelect" aria-label="Choose a size option"></select>
         </div>
 
+        <!-- Benefits section -->
+        <div class="section">
+          <p class="benefits-title">What it’s commonly used for:</p>
+          <ul class="benefits" id="modalBenefits"></ul>
+        </div>
+
         <div class="row" style="gap:12px;">
           <a class="coa" id="modalCoa" href="#" target="_blank" rel="noreferrer">View COA</a>
         </div>
@@ -536,16 +561,84 @@
   </div>
 
   <script>
-    // Placeholder image & COA until you drop real ones into the repo
-    const PLACEHOLDER_IMG = "images/placeholder.jpg"; // put a placeholder here, or replace per product
+    const PLACEHOLDER_IMG = "images/placeholder.jpg"; // update or replace per product
     const PLACEHOLDER_COA = "#";
 
-    /**
-     * PRODUCTS
-     * - Prices are placeholders (0 => shown as $—).
-     * - Images/COAs are placeholders.
-     * - Display order is forced alphabetical in renderGrid().
-     */
+    // Benefits copy (mapped by product name)
+    const benefitsMap = {
+      "BPC-157": [
+        "Helping sore or injured tendons, ligaments, and joints recover",
+        "Calming swelling and irritation after strains/overuse",
+        "Supporting gut lining comfort (like stomach/intestinal irritation)"
+      ],
+      "Cagrilintide": [
+        "Reducing appetite and “food noise”",
+        "Helping with weight loss by making you feel full sooner",
+        "Supporting portion control and fewer cravings"
+      ],
+      "GHK-CU": [
+        "Improving skin look and texture (firmer, smoother)",
+        "Supporting hair and scalp health",
+        "Helping skin recover after irritation or damage"
+      ],
+      "GLP-3RT": [
+        "Lowering appetite and helping you feel full",
+        "Supporting weight loss",
+        "Helping with blood sugar control (after-meal spikes)"
+      ],
+      "GLP2TZ": [
+        "Lowering appetite and helping you feel full longer",
+        "Supporting weight loss",
+        "Helping blood sugar control and insulin response"
+      ],
+      "KLOW": [
+        "Supporting overall recovery (muscles, tendons, soft tissue)",
+        "Calming inflammation/irritation in the body",
+        "Supporting gut comfort and immune balance"
+      ],
+      "KPV": [
+        "Calming inflammation (especially in the gut)",
+        "Supporting gut comfort and “calm” digestion",
+        "Helping soothe irritated skin or tissue"
+      ],
+      "MOTS-C": [
+        "Supporting energy use and metabolism",
+        "Helping the body handle blood sugar and fuel better",
+        "Supporting endurance and exercise recovery"
+      ],
+      "NAD+": [
+        "Supporting cell energy (how your body makes and uses energy)",
+        "Supporting brain/mental energy and focus",
+        "Supporting healthy aging and recovery from stress"
+      ],
+      "Selank": [
+        "Reducing anxious feelings and stress",
+        "Supporting calm focus",
+        "Supporting sleep quality (relaxation)"
+      ],
+      "Semax": [
+        "Supporting focus and mental clarity",
+        "Supporting memory and learning",
+        "Supporting mental energy and motivation"
+      ],
+      "SS-31": [
+        "Supporting cell “powerhouse” function (mitochondria)",
+        "Supporting energy, stamina, and fatigue resistance",
+        "Supporting recovery in tissues under stress (like muscles)"
+      ],
+      "Tesamorelin": [
+        "Reducing deep belly fat (especially visceral fat)",
+        "Increasing natural growth-hormone signaling",
+        "Supporting body composition (more lean, less fat)"
+      ],
+      "Wolverine Stack (BPC157/TB-500)": [
+        "Faster recovery from strains, aches, and overuse",
+        "Supporting tendon/ligament and soft-tissue repair",
+        "Reducing inflammation and soreness during recovery"
+      ]
+    };
+
+    // Products (prices are placeholders; 0 => shows as $—). Sorted alphabetically at render time.
     const products = [
       { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
         variants:[ {label:"10mg", price:0} ] },
@@ -611,6 +704,7 @@
     const modalTags = document.getElementById("modalTags");
     const modalSoldOut = document.getElementById("modalSoldOut");
     const variantSelect = document.getElementById("variantSelect");
+    const modalBenefits = document.getElementById("modalBenefits");
 
     let activeCategory = "all";
     let query = "";
@@ -716,6 +810,15 @@
       modalPrice.textContent = formatMoney(v.price);
     }
 
+    function renderBenefitsForProductName(name){
+      const benefits = benefitsMap[name] || [];
+      if (!benefits.length){
+        modalBenefits.innerHTML = "<li>Benefits info coming soon.</li>";
+        return;
+      }
+      modalBenefits.innerHTML = benefits.map(b => `<li>${escapeHtml(b)}</li>`).join("");
+    }
+
     function openModal(p){
       activeProduct = p;
 
@@ -731,6 +834,8 @@
 
       modalCoa.href = p.coaUrl || "#";
       modalSoldOut.style.display = p.soldOut ? "block" : "none";
+
+      renderBenefitsForProductName(p.name);
 
       const variants = p.variants || [];
       variantSelect.innerHTML = [
