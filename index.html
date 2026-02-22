@@ -9,8 +9,6 @@
     :root{
       /* Theme (matched to your header) */
       --bg:#07090b;          /* near-black */
-      --panel:#0c0f12;       /* card background */
-      --panel2:#0f1318;      /* modal background */
       --text:#e5e7eb;        /* light text */
       --muted:#9aa3ad;       /* muted gray */
       --border:#1c232c;      /* dark border */
@@ -21,60 +19,80 @@
 
       /* Accents */
       --accent:#c1121f;      /* red accent */
-      --price:#e5e7eb;       /* bright prices */
       --chip:#0b0f13;
       --chipActive:#101720;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
+
+    /* Smooth, continuous gradient that doesn't "band" on scroll */
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
+      background: var(--bg);
+      overflow-x:hidden;
+    }
+    /* Put gradient on a fixed layer so it stays consistent while scrolling */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
       background:
-        radial-gradient(1200px 800px at 15% -10%, rgba(193,18,31,.18), transparent 55%),
-        radial-gradient(900px 600px at 95% 0%, rgba(148,163,184,.12), transparent 50%),
-        var(--bg);
+        radial-gradient(1200px 800px at 12% 0%, rgba(193,18,31,.18), transparent 60%),
+        radial-gradient(900px 700px at 95% 10%, rgba(148,163,184,.12), transparent 55%),
+        radial-gradient(1100px 900px at 50% 110%, rgba(193,18,31,.14), transparent 60%),
+        linear-gradient(180deg, #050607 0%, #07090b 45%, #06080a 100%);
+    }
+    /* Extra subtle gradient near page bottom so it feels "richer" as you scroll */
+    .page-glow{
+      position:absolute;
+      left:0; right:0;
+      top:65vh;
+      height:160vh;
+      z-index:-2;
+      background:
+        radial-gradient(900px 700px at 50% 70%, rgba(193,18,31,.10), transparent 60%);
+      pointer-events:none;
     }
 
-    /* Thin, full-width header banner (NO cropping; always readable) */
+    /* Thin, full-width header banner (NO cropping) */
     .hero{
       width:100%;
       border-bottom:1px solid var(--border);
       background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
     }
-    .hero-inner{
-      width:100%;
-      padding:10px 0 12px;
-    }
+    .hero-inner{ width:100%; padding:10px 0 12px; }
     .hero-banner{
       width:100%;
-      height:125px;                /* thinner but readable */
+      height:84px; /* thinner + readable */
       display:flex;
       align-items:center;
       justify-content:center;
-      background:#000;            /* matches header background */
+      background:#000;
       border-top:1px solid rgba(255,255,255,.06);
       border-bottom:1px solid rgba(255,255,255,.06);
     }
     .hero-banner img{
       height:100%;
-      width:min(1400px, 100%);    /* wide on large screens */
-      object-fit:contain;         /* key: no cutoff */
+      width:min(1400px, 100%);
+      object-fit:contain; /* no cutoff */
       object-position:center;
       display:block;
-      padding:6px 14px;           /* breathing room */
+      padding:6px 14px;
     }
     @media (max-width: 640px){
-      .hero-banner{ height:72px; }
+      .hero-banner{ height:68px; }
       .hero-banner img{ padding:6px 10px; }
     }
 
     .wrap{
       max-width:var(--max);
       margin:0 auto;
-      padding:18px 16px 70px;
+      padding:18px 16px 90px;
+      position:relative;
     }
 
     .toolbar{
@@ -92,6 +110,7 @@
       align-items:center;
       flex-wrap:wrap;
     }
+
     .chip{
       border:1px solid var(--border);
       background:var(--chip);
@@ -101,6 +120,7 @@
       cursor:pointer;
       color:var(--text);
       transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      white-space:nowrap;
     }
     .chip:hover{ border-color: rgba(193,18,31,.55); }
     .chip:active{ transform: translateY(1px); }
@@ -159,6 +179,7 @@
       flex-direction:column;
       min-height: 320px;
     }
+
     .thumb{
       position:relative;
       aspect-ratio: 4 / 3;
@@ -211,7 +232,7 @@
     .price{
       margin-top:auto;
       font-weight:950;
-      color:var(--price);
+      color:#ffffff;
       font-size:16px;
     }
 
@@ -249,39 +270,46 @@
     }
     .view:active{ transform: translateY(1px); }
 
-    /* Modal - product page style */
+    /* Modal backdrop blur + lock page interaction */
     .modal-backdrop{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.62);
       display:none;
       align-items:center;
       justify-content:center;
-      padding:18px;
-      z-index:100;
+      padding:14px;
+      z-index:1000;
+      background: rgba(0,0,0,.55);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      touch-action:none; /* reduce scroll/pinch through backdrop */
     }
+
+    /* modal container */
     .modal{
       width:min(1120px, 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       border-radius:18px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
       box-shadow: 0 25px 70px rgba(0,0,0,.65);
       display:grid;
       grid-template-columns: 1.25fr 1fr;
+      max-height: min(86vh, 900px); /* important for phones */
     }
-    @media (max-width: 900px){
-      .modal{ grid-template-columns: 1fr; }
+
+    /* Ensure modal scrolls internally on phones */
+    .modal-media,
+    .modal-content{
+      min-height:0;
     }
+
     .modal-media{
       position:relative;
       background:#07090b;
-      min-height:360px;
       border-right:1px solid rgba(255,255,255,.08);
     }
-    @media (max-width: 900px){
-      .modal-media{ border-right:none; border-bottom:1px solid rgba(255,255,255,.08); }
-    }
+
     .modal-media img{
       width:100%;
       height:100%;
@@ -289,6 +317,7 @@
       display:block;
       filter: contrast(1.02) saturate(.95);
     }
+
     .modal-badge{
       position:absolute;
       top:14px;
@@ -308,7 +337,10 @@
       display:flex;
       flex-direction:column;
       gap:12px;
+      overflow:auto;               /* <- scroll inside modal on phone */
+      -webkit-overflow-scrolling: touch;
     }
+
     .crumbs{
       font-size:13px;
       color:var(--muted);
@@ -332,12 +364,13 @@
       border-radius:12px;
       width:44px;height:44px;
       cursor:pointer;
+      flex:0 0 auto;
     }
     .close:hover{ border-color: rgba(193,18,31,.7); background: rgba(193,18,31,.10); }
 
     .modal-price{
       font-weight:950;
-      color: #ffffff;
+      color:#ffffff;
       font-size:28px;
     }
     .modal-price::after{
@@ -400,10 +433,34 @@
       font-size:13px;
       color: rgba(229,231,235,.85);
     }
+
+    /* Phone-first modal layout: stack image above content */
+    @media (max-width: 900px){
+      .modal{
+        grid-template-columns: 1fr;
+        max-height: 90vh;
+      }
+      .modal-media{
+        border-right:none;
+        border-bottom:1px solid rgba(255,255,255,.08);
+        height: 42vh; /* visible product image but not huge */
+      }
+      .modal-title{ font-size:28px; }
+      .modal-price{ font-size:24px; }
+    }
+
+    /* When modal open: lock page scrolling */
+    body.modal-open{
+      overflow:hidden;
+      height:100%;
+      touch-action:none;
+    }
   </style>
 </head>
 
 <body>
+  <div class="page-glow" aria-hidden="true"></div>
+
   <!-- Thin full-width banner header (scaled, not cropped) -->
   <header class="hero">
     <div class="hero-inner">
@@ -426,7 +483,7 @@
 
   <!-- Product page modal -->
   <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-label="Product details">
-    <div class="modal">
+    <div class="modal" role="document">
       <div class="modal-media">
         <div class="modal-badge" id="modalSoldOut" style="display:none;">SOLD<br>OUT</div>
         <img id="modalImg" alt="" />
@@ -647,6 +704,12 @@
       modalPrice.textContent = formatMoney(v.price);
     }
 
+    /* Accessibility + mobile usability:
+       - lock body scroll
+       - blur backdrop
+       - prevent interacting with page underneath (backdrop covers whole screen)
+       - allow ESC to close
+    */
     function openModal(p){
       activeProduct = p;
 
@@ -676,11 +739,16 @@
         modalPrice.textContent = priceRangeText(p);
       }
 
+      document.body.classList.add("modal-open");
       backdrop.style.display = "flex";
+
+      // Focus close button for keyboard users
+      setTimeout(() => closeModal.focus(), 0);
     }
 
     function hideModal(){
       backdrop.style.display = "none";
+      document.body.classList.remove("modal-open");
       activeProduct = null;
     }
 
@@ -695,11 +763,15 @@
     });
 
     closeModal.addEventListener("click", hideModal);
+
+    // Click outside modal closes
     backdrop.addEventListener("click", (e) => {
       if(e.target === backdrop) hideModal();
     });
+
+    // ESC closes
     document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape") hideModal();
+      if(e.key === "Escape" && backdrop.style.display === "flex") hideModal();
     });
 
     renderFilters();
