@@ -3,60 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Catalog</title>
+  <title>GritScript Catalog</title>
   <style>
     :root{
-      --bg:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --card:#ffffff;
-      --price:#1d4ed8;
-      --shadow: 0 10px 25px rgba(0,0,0,.06);
+      /* Theme (matched to your header) */
+      --bg:#07090b;          /* near-black */
+      --panel:#0c0f12;       /* card background */
+      --panel2:#0f1318;      /* modal background */
+      --text:#e5e7eb;        /* light text */
+      --muted:#9aa3ad;       /* muted gray */
+      --border:#1c232c;      /* dark border */
+      --shadow: 0 18px 40px rgba(0,0,0,.55);
       --radius: 14px;
-      --max: 1200px;
+      --max: 1240px;
       --gap: 18px;
+
+      /* Accents */
+      --accent:#c1121f;      /* red accent */
+      --price:#e5e7eb;       /* keep prices bright */
+      --chip:#0b0f13;
+      --chipActive:#101720;
     }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
-      background:var(--bg);
+      background:
+        radial-gradient(1200px 800px at 15% -10%, rgba(193,18,31,.18), transparent 55%),
+        radial-gradient(900px 600px at 95% 0%, rgba(148,163,184,.12), transparent 50%),
+        var(--bg);
     }
 
-    /* Header image */
+    /* Thin, full-width header banner */
     .hero{
       width:100%;
       border-bottom:1px solid var(--border);
-      background:#fff;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
     }
     .hero-inner{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:14px 16px;
+      width:100%;
+      padding:10px 0 12px;
     }
     .hero img{
       width:100%;
-      height:auto;
+      height:92px;                 /* thinner */
+      object-fit:cover;            /* crops to a wide banner */
+      object-position:center;
       display:block;
-      border-radius:16px;
-      border:1px solid var(--border);
-      box-shadow: var(--shadow);
-      object-fit:cover;
+      border-top:1px solid rgba(255,255,255,.06);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:#000;
+    }
+    @media (max-width: 640px){
+      .hero img{ height:74px; }
     }
 
     .wrap{
       max-width:var(--max);
       margin:0 auto;
-      padding:18px 16px 60px;
+      padding:18px 16px 70px;
     }
 
     .toolbar{
       display:flex;
       flex-wrap:wrap;
-      gap:10px;
+      gap:12px;
       align-items:center;
       justify-content:space-between;
       margin:14px 0 16px;
@@ -70,17 +84,21 @@
     }
     .chip{
       border:1px solid var(--border);
-      background:#fff;
-      padding:8px 12px;
+      background:var(--chip);
+      padding:9px 12px;
       border-radius:999px;
       font-size:13px;
       cursor:pointer;
       color:var(--text);
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
     }
+    .chip:hover{ border-color: rgba(193,18,31,.55); }
+    .chip:active{ transform: translateY(1px); }
     .chip[data-active="true"]{
-      border-color:#111827;
-      box-shadow: 0 0 0 2px rgba(17,24,39,.08) inset;
-      font-weight:600;
+      background:var(--chipActive);
+      border-color: rgba(193,18,31,.8);
+      box-shadow: 0 0 0 2px rgba(193,18,31,.12) inset;
+      font-weight:700;
     }
 
     .search{
@@ -91,11 +109,18 @@
     }
     .search input{
       width:100%;
-      padding:11px 12px;
+      padding:12px 12px;
       border:1px solid var(--border);
       border-radius:12px;
       outline:none;
       font-size:14px;
+      color:var(--text);
+      background: rgba(255,255,255,.03);
+    }
+    .search input::placeholder{ color: rgba(229,231,235,.55); }
+    .search input:focus{
+      border-color: rgba(193,18,31,.8);
+      box-shadow: 0 0 0 3px rgba(193,18,31,.12);
     }
 
     .grid{
@@ -103,7 +128,7 @@
       grid-template-columns: repeat(4, minmax(0,1fr));
       gap:var(--gap);
     }
-    @media (max-width: 1050px){
+    @media (max-width: 1100px){
       .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
     }
     @media (max-width: 760px){
@@ -117,7 +142,7 @@
     .card{
       border:1px solid var(--border);
       border-radius:var(--radius);
-      background:var(--card);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
       overflow:hidden;
       box-shadow: var(--shadow);
       display:flex;
@@ -127,7 +152,7 @@
     .thumb{
       position:relative;
       aspect-ratio: 4 / 3;
-      background:#f3f4f6;
+      background:#0a0d10;
       overflow:hidden;
     }
     .thumb img{
@@ -136,19 +161,21 @@
       object-fit:cover;
       display:block;
       transform: scale(1.02);
+      filter: contrast(1.02) saturate(.95);
     }
     .badge{
       position:absolute;
       top:12px; left:12px;
-      background:rgba(255,255,255,.95);
-      border:1px solid var(--border);
+      background:rgba(0,0,0,.78);
+      border:1px solid rgba(255,255,255,.10);
       border-radius:999px;
-      padding:7px 10px;
+      padding:8px 11px;
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.2px;
       text-align:center;
       line-height:1.05;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
 
     .card-body{
@@ -160,7 +187,7 @@
     }
     .title{
       font-weight:900;
-      letter-spacing:.2px;
+      letter-spacing:.25px;
       font-size:16px;
       margin:0;
     }
@@ -173,10 +200,11 @@
     }
     .price{
       margin-top:auto;
-      font-weight:900;
+      font-weight:950;
       color:var(--price);
       font-size:16px;
     }
+
     .card-footer{
       padding:0 14px 14px;
       display:flex;
@@ -184,30 +212,38 @@
       align-items:center;
       justify-content:space-between;
     }
+
     .coa{
       font-size:13px;
       text-decoration:none;
-      color:#111827;
-      border-bottom: 1px dashed rgba(17,24,39,.35);
+      color: rgba(229,231,235,.92);
+      border-bottom: 1px dashed rgba(193,18,31,.55);
       padding-bottom:2px;
     }
-    .coa:hover{ opacity:.85; }
+    .coa:hover{ color:#fff; border-bottom-color: rgba(193,18,31,.95); }
 
     .view{
       font-size:13px;
-      border:1px solid var(--border);
-      background:#fff;
-      padding:9px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:9px 11px;
       border-radius:12px;
       cursor:pointer;
       white-space:nowrap;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
     }
+    .view:hover{
+      border-color: rgba(193,18,31,.65);
+      background: rgba(193,18,31,.10);
+    }
+    .view:active{ transform: translateY(1px); }
 
     /* Modal - product page style */
     .modal-backdrop{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.45);
+      background:rgba(0,0,0,.62);
       display:none;
       align-items:center;
       justify-content:center;
@@ -215,12 +251,12 @@
       z-index:100;
     }
     .modal{
-      width:min(1100px, 100%);
-      background:#fff;
+      width:min(1120px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
       border-radius:18px;
       overflow:hidden;
-      border:1px solid var(--border);
-      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: 0 25px 70px rgba(0,0,0,.65);
       display:grid;
       grid-template-columns: 1.25fr 1fr;
     }
@@ -229,25 +265,30 @@
     }
     .modal-media{
       position:relative;
-      background:#f3f4f6;
+      background:#07090b;
       min-height:360px;
+      border-right:1px solid rgba(255,255,255,.08);
+    }
+    @media (max-width: 900px){
+      .modal-media{ border-right:none; border-bottom:1px solid rgba(255,255,255,.08); }
     }
     .modal-media img{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
+      filter: contrast(1.02) saturate(.95);
     }
     .modal-badge{
       position:absolute;
       top:14px;
       right:14px;
-      background:rgba(255,255,255,.95);
-      border:1px solid var(--border);
+      background:rgba(0,0,0,.75);
+      border:1px solid rgba(255,255,255,.10);
       border-radius:999px;
-      padding:9px 12px;
+      padding:10px 13px;
       font-size:12px;
-      font-weight:900;
+      font-weight:950;
       line-height:1.05;
       text-align:center;
     }
@@ -272,20 +313,31 @@
       margin:0;
       font-size:34px;
       font-weight:950;
-      letter-spacing:.2px;
+      letter-spacing:.25px;
     }
     .close{
-      border:1px solid var(--border);
-      background:#fff;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
       border-radius:12px;
-      width:42px;height:42px;
+      width:44px;height:44px;
       cursor:pointer;
-      flex:0 0 auto;
     }
+    .close:hover{ border-color: rgba(193,18,31,.7); background: rgba(193,18,31,.10); }
+
     .modal-price{
       font-weight:950;
-      color:var(--price);
+      color: #ffffff;
       font-size:28px;
+    }
+    .modal-price::after{
+      content:"";
+      display:block;
+      height:2px;
+      width:72px;
+      margin-top:10px;
+      background: linear-gradient(90deg, rgba(193,18,31,1), rgba(193,18,31,0));
+      border-radius:999px;
     }
 
     .row{
@@ -296,21 +348,26 @@
     .label{
       min-width:52px;
       font-size:14px;
-      font-weight:800;
-      color:#111827;
+      font-weight:900;
+      color:var(--text);
     }
     select{
       width:100%;
-      padding:10px 12px;
-      border:1px solid var(--border);
+      padding:11px 12px;
+      border:1px solid rgba(255,255,255,.12);
       border-radius:10px;
-      background:#fff;
+      background: rgba(255,255,255,.03);
+      color:var(--text);
       font-size:14px;
       outline:none;
     }
+    select:focus{
+      border-color: rgba(193,18,31,.8);
+      box-shadow: 0 0 0 3px rgba(193,18,31,.12);
+    }
 
     .info{
-      border-top:1px solid var(--border);
+      border-top:1px solid rgba(255,255,255,.10);
       margin-top:6px;
       padding-top:12px;
       display:flex;
@@ -322,21 +379,22 @@
       display:flex;
       gap:8px;
       flex-wrap:wrap;
+      color: rgba(229,231,235,.92);
     }
-    .kv b{ font-weight:900; }
+    .kv b{ font-weight:950; color:#fff; }
     .note{
-      background:#f9fafb;
-      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.10);
       padding:10px 12px;
       border-radius:14px;
       font-size:13px;
-      color:#374151;
+      color: rgba(229,231,235,.85);
     }
   </style>
 </head>
 
 <body>
-  <!-- HEADER IMAGE (put header.png next to this index.html) -->
+  <!-- Thin full-width banner header -->
   <header class="hero">
     <div class="hero-inner">
       <img src="header.png" alt="Header" />
@@ -346,7 +404,6 @@
   <main class="wrap">
     <div class="toolbar">
       <div class="filters" id="filters"></div>
-
       <div class="search">
         <input id="searchInput" type="search" placeholder="Search products (name, mg, tags)..." />
       </div>
@@ -397,16 +454,12 @@
   </div>
 
   <script>
-    /**
-     * Edit products here.
-     * Each product has variants (size options). Selecting a variant updates price.
-     */
     const products = [
       {
         id: "bpc-157",
         name: "BPC-157",
         category: "Uncategorized",
-        sku: "CP-BPC157",
+        sku: "GS-BPC157",
         image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
         tags: ["peptide"],
@@ -420,7 +473,7 @@
         id: "aod",
         name: "AOD",
         category: "Uncategorized",
-        sku: "CP-AOD",
+        sku: "GS-AOD",
         image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
         tags: ["peptide"],
@@ -433,12 +486,12 @@
       },
       {
         id: "bac-water",
-        name: "Hospira Bac Water",
+        name: "Bacteriostatic Water",
         category: "Supplies",
-        sku: "CP-BACW30",
+        sku: "GS-BACW30",
         image: "https://images.unsplash.com/photo-1582719478185-2bb3c78f6b04?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
-        tags: ["supplies", "water"],
+        tags: ["supplies"],
         soldOut: false,
         variants: [
           { label: "30mL (Single)", price: 20.00 }
@@ -448,7 +501,7 @@
         id: "ghk-cu",
         name: "GHK-Cu",
         category: "Uncategorized",
-        sku: "CP-GHKCU50",
+        sku: "GS-GHKCU50",
         image: "https://images.unsplash.com/photo-1520975693410-001d05d6f5c3?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
         tags: ["peptide"],
@@ -596,23 +649,18 @@
       modalTags.textContent = (p.tags && p.tags.length) ? p.tags.map(t => `#${t}`).join(" ") : "";
 
       modalCoa.href = p.coaUrl || "#";
-
-      // Sold out badge (top right like screenshot)
       modalSoldOut.style.display = p.soldOut ? "block" : "none";
 
-      // Build dropdown (size options)
       const variants = p.variants || [];
       variantSelect.innerHTML = [
         `<option value="" disabled selected>Choose an option</option>`,
         ...variants.map((v, i) => `<option value="${i}">${escapeHtml(v.label)}</option>`)
       ].join("");
 
-      // If only one variant, auto-select it
       if (variants.length === 1){
         variantSelect.value = "0";
         setModalPriceFromVariantIndex(0);
       } else {
-        // show range until user chooses
         modalPrice.textContent = priceRangeText(p);
       }
 
@@ -624,19 +672,16 @@
       activeProduct = null;
     }
 
-    // Dropdown changes update price
     variantSelect.addEventListener("change", () => {
       const idx = Number(variantSelect.value);
       if (Number.isFinite(idx)) setModalPriceFromVariantIndex(idx);
     });
 
-    // Search
     searchInput.addEventListener("input", (e) => {
       query = e.target.value;
       renderGrid();
     });
 
-    // Modal events
     closeModal.addEventListener("click", hideModal);
     backdrop.addEventListener("click", (e) => {
       if(e.target === backdrop) hideModal();
@@ -645,7 +690,6 @@
       if(e.key === "Escape") hideModal();
     });
 
-    // Init
     renderFilters();
     renderGrid();
   </script>
