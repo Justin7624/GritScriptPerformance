@@ -212,21 +212,6 @@
       filter: contrast(1.02) saturate(.95);
     }
 
-    .badge{
-      position:absolute;
-      top:12px; left:12px;
-      background:rgba(0,0,0,.78);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:999px;
-      padding:8px 11px;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.2px;
-      text-align:center;
-      line-height:1.05;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-
     .card-body{
       padding:14px 14px 12px;
       display:flex;
@@ -262,14 +247,22 @@
       justify-content:space-between;
     }
 
-    .coa{
+    /* COA: non-link placeholder by default */
+    .coa-chip{
       font-size:13px;
-      text-decoration:none;
       color: rgba(229,231,235,.92);
       border-bottom: 1px dashed rgba(193,18,31,.55);
       padding-bottom:2px;
+      cursor: default;
+      user-select:none;
     }
-    .coa:hover{ color:#fff; border-bottom-color: rgba(193,18,31,.95); }
+    .coa-chip.has-coa{
+      cursor:pointer;
+    }
+    .coa-chip.has-coa:hover{
+      color:#fff;
+      border-bottom-color: rgba(193,18,31,.95);
+    }
 
     .view{
       font-size:13px;
@@ -309,7 +302,6 @@
       width:min(1120px, 100%);
       border-radius:18px;
       overflow:hidden;
-
       border:1px solid rgba(193,18,31,.55);
       box-shadow:
         0 0 0 2px rgba(193,18,31,.18) inset,
@@ -472,6 +464,7 @@
       color: rgba(229,231,235,.92);
     }
     .kv b{ font-weight:950; color:#fff; }
+
     .note{
       background: rgba(255,255,255,.03);
       border:1px solid rgba(255,255,255,.10);
@@ -504,6 +497,76 @@
     body.modal-open .modal-backdrop{
       touch-action:auto;
     }
+
+    /* COA modal */
+    .coa-backdrop{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+      z-index:1100;
+      background: rgba(0,0,0,.65);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .coa-panel{
+      width:min(980px, 100%);
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(193,18,31,.50);
+      box-shadow: 0 30px 90px rgba(0,0,0,.75), 0 0 28px rgba(193,18,31,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      transform: translateY(8px) scale(.985);
+      opacity:0;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .coa-backdrop.is-open .coa-panel{
+      transform: translateY(0) scale(1);
+      opacity:1;
+    }
+    .coa-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .coa-head h4{
+      margin:0;
+      font-size:15px;
+      font-weight:950;
+      letter-spacing:.2px;
+    }
+    .coa-body{
+      padding:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height: 320px;
+    }
+    .coa-body img{
+      max-width:100%;
+      height:auto;
+      display:block;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#07090b;
+    }
+    .coa-soon{
+      color: rgba(229,231,235,.85);
+      font-size:16px;
+      font-weight:800;
+      text-align:center;
+      padding:28px 14px;
+      border:1px dashed rgba(193,18,31,.45);
+      border-radius:14px;
+      background: rgba(255,255,255,.02);
+      width:100%;
+    }
   </style>
 </head>
 
@@ -527,6 +590,7 @@
     <section class="grid" id="grid"></section>
   </main>
 
+  <!-- Product modal -->
   <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-label="Product details">
     <div class="modal" role="document">
       <div class="modal-media">
@@ -554,8 +618,9 @@
           <ul class="benefits" id="modalBenefits"></ul>
         </div>
 
+        <!-- COA trigger (not a link) -->
         <div class="row" style="gap:12px;">
-          <a class="coa" id="modalCoa" href="#" target="_blank" rel="noreferrer">View COA</a>
+          <span class="coa-chip" id="modalCoaTrigger" role="button" aria-label="Open COA">COA coming soon</span>
         </div>
 
         <div class="info">
@@ -571,9 +636,21 @@
     </div>
   </div>
 
+  <!-- COA modal -->
+  <div class="coa-backdrop" id="coaBackdrop" role="dialog" aria-modal="true" aria-label="COA">
+    <div class="coa-panel" role="document">
+      <div class="coa-head">
+        <h4 id="coaTitle">COA</h4>
+        <button class="close" id="closeCoa" aria-label="Close COA">✕</button>
+      </div>
+      <div class="coa-body" id="coaBody">
+        <div class="coa-soon">COA coming soon</div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const PLACEHOLDER_IMG = "images/placeholder.jpg";
-    const PLACEHOLDER_COA = "#";
 
     const benefitsMap = {
       "BPC-157": [
@@ -648,49 +725,63 @@
       ]
     };
 
-    // Products + PRICES (as requested)
-    // NOTE: Display order is forced alphabetical in renderGrid().
+    // If/when you upload COA images, set coaImage to a path (e.g. "coas/bpc-157.png").
+    // If coaImage is null/empty => shows "COA coming soon" and does nothing.
     const products = [
-      { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:25} ] },
 
-      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", sku:"GS-CAGRILINTIDE", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", sku:"GS-CAGRILINTIDE", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"5mg", price:40} ] },
 
-      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", sku:"GS-GHKCU", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", sku:"GS-GHKCU", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"50mg", price:35}, {label:"100mg", price:50} ] },
 
-      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", sku:"GS-GLP3RT", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", sku:"GS-GLP3RT", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"15mg", price:65}, {label:"20mg", price:80} ] },
 
-      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", sku:"GS-GLP2TZ", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", sku:"GS-GLP2TZ", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:50} ] },
 
-      { id:"klow", name:"KLOW", category:"Peptides", sku:"GS-KLOW", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"klow", name:"KLOW", category:"Peptides", sku:"GS-KLOW", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"80mg", price:85} ] },
 
-      { id:"kpv", name:"KPV", category:"Peptides", sku:"GS-KPV", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"kpv", name:"KPV", category:"Peptides", sku:"GS-KPV", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"mots-c", name:"MOTS-C", category:"Peptides", sku:"GS-MOTSC", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"mots-c", name:"MOTS-C", category:"Peptides", sku:"GS-MOTSC", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"nad-plus", name:"NAD+", category:"Peptides", sku:"GS-NADPLUS", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"nad-plus", name:"NAD+", category:"Peptides", sku:"GS-NADPLUS", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"1000mg", price:50} ] },
 
-      { id:"selank", name:"Selank", category:"Peptides", sku:"GS-SELANK", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"selank", name:"Selank", category:"Peptides", sku:"GS-SELANK", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"semax", name:"Semax", category:"Peptides", sku:"GS-SEMAX", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"semax", name:"Semax", category:"Peptides", sku:"GS-SEMAX", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:35} ] },
 
-      { id:"ss-31", name:"SS-31", category:"Peptides", sku:"GS-SS31", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"ss-31", name:"SS-31", category:"Peptides", sku:"GS-SS31", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:45} ] },
 
-      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", sku:"GS-TESAMORELIN", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"],
+      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", sku:"GS-TESAMORELIN", image:PLACEHOLDER_IMG, tags:["peptide"],
+        coaImage:null,
         variants:[ {label:"10mg", price:45} ] },
 
-      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", sku:"GS-WOLVERINE", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide","stack"],
+      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", sku:"GS-WOLVERINE", image:PLACEHOLDER_IMG, tags:["peptide","stack"],
+        coaImage:null,
         variants:[ {label:"10mg", price:35}, {label:"20mg", price:60} ] },
     ];
 
@@ -703,18 +794,25 @@
     const filtersEl = document.getElementById("filters");
     const searchInput = document.getElementById("searchInput");
 
+    // Product modal elements
     const backdrop = document.getElementById("backdrop");
     const closeModal = document.getElementById("closeModal");
     const modalImg = document.getElementById("modalImg");
     const modalTitle = document.getElementById("modalTitle");
     const modalCrumbs = document.getElementById("modalCrumbs");
     const modalPrice = document.getElementById("modalPrice");
-    const modalCoa = document.getElementById("modalCoa");
     const modalSku = document.getElementById("modalSku");
     const modalCategory = document.getElementById("modalCategory");
     const modalTags = document.getElementById("modalTags");
     const variantSelect = document.getElementById("variantSelect");
     const modalBenefits = document.getElementById("modalBenefits");
+    const modalCoaTrigger = document.getElementById("modalCoaTrigger");
+
+    // COA modal elements
+    const coaBackdrop = document.getElementById("coaBackdrop");
+    const closeCoa = document.getElementById("closeCoa");
+    const coaTitle = document.getElementById("coaTitle");
+    const coaBody = document.getElementById("coaBody");
 
     let activeCategory = "all";
     let query = "";
@@ -775,6 +873,9 @@
       if (p.sku) metaParts.push(p.sku);
       const meta = metaParts.join(" • ");
 
+      const hasCoa = !!p.coaImage;
+      const coaText = hasCoa ? "View COA" : "COA coming soon";
+
       return `
         <article class="card">
           <div class="thumb">
@@ -786,7 +887,7 @@
             <div class="price">${escapeHtml(priceRangeText(p))}</div>
           </div>
           <div class="card-footer">
-            <a class="coa" href="${escapeHtml(p.coaUrl || "#")}" target="_blank" rel="noreferrer">View COA</a>
+            <span class="coa-chip ${hasCoa ? "has-coa" : ""}" data-coa="${escapeHtml(p.id)}">${escapeHtml(coaText)}</span>
             <button class="view" data-id="${escapeHtml(p.id)}">View</button>
           </div>
         </article>
@@ -808,6 +909,14 @@
           openModal(p);
         });
       });
+
+      // Optional: COA from card (only opens if image exists)
+      grid.querySelectorAll(".coa-chip.has-coa").forEach(el => {
+        el.addEventListener("click", () => {
+          const p = products.find(x => x.id === el.dataset.coa);
+          if(p) openCoa(p);
+        });
+      });
     }
 
     function renderBenefitsForProductName(name){
@@ -815,6 +924,28 @@
       modalBenefits.innerHTML = benefits.length
         ? benefits.map(b => `<li>${escapeHtml(b)}</li>`).join("")
         : "<li>Benefits info coming soon.</li>";
+    }
+
+    function setCoaTrigger(p){
+      const hasCoa = !!p.coaImage;
+      modalCoaTrigger.textContent = hasCoa ? "View COA" : "COA coming soon";
+      modalCoaTrigger.classList.toggle("has-coa", hasCoa);
+
+      // Remove any previous handler by replacing node (simple & safe)
+      const newNode = modalCoaTrigger.cloneNode(true);
+      modalCoaTrigger.parentNode.replaceChild(newNode, modalCoaTrigger);
+      // Re-bind reference
+      window.__modalCoaTrigger = newNode;
+
+      if (hasCoa){
+        newNode.addEventListener("click", () => openCoa(p));
+        newNode.setAttribute("tabindex", "0");
+        newNode.addEventListener("keydown", (e) => {
+          if(e.key === "Enter" || e.key === " ") { e.preventDefault(); openCoa(p); }
+        });
+      } else {
+        newNode.removeAttribute("tabindex");
+      }
     }
 
     function openModal(p){
@@ -829,16 +960,17 @@
       modalSku.textContent = p.sku || "—";
       modalCategory.textContent = cat;
       modalTags.textContent = (p.tags && p.tags.length) ? p.tags.map(t => `#${t}`).join(" ") : "";
-      modalCoa.href = p.coaUrl || "#";
 
       renderBenefitsForProductName(p.name);
 
       const variants = p.variants || [];
       variantSelect.innerHTML = variants.map((v, i) => `<option value="${i}">${escapeHtml(v.label)}</option>`).join("");
 
-      // Default to the first variant and show its price
       variantSelect.value = "0";
       modalPrice.textContent = formatMoney(variants[0].price);
+
+      // COA placeholder / opener
+      setCoaTrigger(p);
 
       document.body.classList.add("modal-open");
       backdrop.style.display = "flex";
@@ -851,6 +983,11 @@
       backdrop.style.display = "none";
       document.body.classList.remove("modal-open");
       activeProduct = null;
+    }
+
+    // Use the *current* COA trigger reference (it gets replaced in setCoaTrigger)
+    function getModalCoaTrigger(){
+      return window.__modalCoaTrigger || document.getElementById("modalCoaTrigger");
     }
 
     variantSelect.addEventListener("change", () => {
@@ -874,10 +1011,40 @@
 
     document.addEventListener("keydown", (e) => {
       if(e.key === "Escape" && backdrop.style.display === "flex") hideModal();
+      if(e.key === "Escape" && coaBackdrop.style.display === "flex") hideCoa();
     });
 
+    // COA modal
+    function openCoa(p){
+      coaTitle.textContent = `${p.name} — COA`;
+
+      if (p.coaImage){
+        coaBody.innerHTML = `<img src="${escapeHtml(p.coaImage)}" alt="${escapeHtml(p.name)} COA" />`;
+      } else {
+        coaBody.innerHTML = `<div class="coa-soon">COA coming soon</div>`;
+      }
+
+      coaBackdrop.style.display = "flex";
+      coaBackdrop.classList.add("is-open");
+      setTimeout(() => closeCoa.focus(), 0);
+    }
+
+    function hideCoa(){
+      coaBackdrop.classList.remove("is-open");
+      coaBackdrop.style.display = "none";
+    }
+
+    closeCoa.addEventListener("click", hideCoa);
+    coaBackdrop.addEventListener("click", (e) => {
+      if(e.target === coaBackdrop) hideCoa();
+    });
+
+    // Initial render
     renderFilters();
     renderGrid();
+
+    // Initialize COA trigger reference once (will be replaced when modal opens)
+    window.__modalCoaTrigger = document.getElementById("modalCoaTrigger");
   </script>
 </body>
 </html>
