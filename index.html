@@ -300,9 +300,12 @@
       background: rgba(0,0,0,.55);
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
-      touch-action:none;
+      /* IMPORTANT: allow scrolling on iOS within children */
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
     }
 
+    /* Modal container */
     .modal{
       width:min(1120px, 100%);
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -312,16 +315,16 @@
       box-shadow: 0 25px 70px rgba(0,0,0,.65);
       display:grid;
       grid-template-columns: 1.25fr 1fr;
-      max-height: min(86vh, 900px);
+      /* let modal size naturally; backdrop scrolls if needed */
+      max-height:none;
+      margin:auto;
     }
-
-    .modal-media,
-    .modal-content{ min-height:0; }
 
     .modal-media{
       position:relative;
       background:#07090b;
       border-right:1px solid rgba(255,255,255,.08);
+      min-height: 360px;
     }
     .modal-media img{
       width:100%;
@@ -349,8 +352,6 @@
       display:flex;
       flex-direction:column;
       gap:12px;
-      overflow:auto;
-      -webkit-overflow-scrolling: touch;
     }
 
     .crumbs{
@@ -472,24 +473,31 @@
       color: rgba(229,231,235,.85);
     }
 
+    /* Phone modal: stack image on top and allow scrolling on the BACKDROP (not the page) */
     @media (max-width: 900px){
       .modal{
         grid-template-columns: 1fr;
-        max-height: 90vh;
+        width: min(720px, 100%);
       }
       .modal-media{
         border-right:none;
         border-bottom:1px solid rgba(255,255,255,.08);
-        height: 42vh;
+        height: 40vh;
+        min-height: 240px;
       }
       .modal-title{ font-size:28px; }
       .modal-price{ font-size:24px; }
     }
 
+    /* lock underlying page scroll; modal/backdrop still scrolls */
     body.modal-open{
       overflow:hidden;
       height:100%;
       touch-action:none;
+    }
+    /* Re-enable touch inside modal so scrolling works */
+    body.modal-open .modal-backdrop{
+      touch-action:auto;
     }
   </style>
 </head>
@@ -537,7 +545,6 @@
           <select id="variantSelect" aria-label="Choose a size option"></select>
         </div>
 
-        <!-- Benefits section -->
         <div class="section">
           <p class="benefits-title">What it’s commonly used for:</p>
           <ul class="benefits" id="modalBenefits"></ul>
@@ -561,10 +568,9 @@
   </div>
 
   <script>
-    const PLACEHOLDER_IMG = "images/placeholder.jpg"; // update or replace per product
+    const PLACEHOLDER_IMG = "images/placeholder.jpg";
     const PLACEHOLDER_COA = "#";
 
-    // Benefits copy (mapped by product name)
     const benefitsMap = {
       "BPC-157": [
         "Helping sore or injured tendons, ligaments, and joints recover",
@@ -576,7 +582,7 @@
         "Helping with weight loss by making you feel full sooner",
         "Supporting portion control and fewer cravings"
       ],
-      "GHK-CU": [
+      "GHK-Cu": [
         "Improving skin look and texture (firmer, smoother)",
         "Supporting hair and scalp health",
         "Helping skin recover after irritation or damage"
@@ -638,7 +644,6 @@
       ]
     };
 
-    // Products (prices are placeholders; 0 => shows as $—). Sorted alphabetically at render time.
     const products = [
       { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, coaUrl:PLACEHOLDER_COA, tags:["peptide"], soldOut:false,
         variants:[ {label:"10mg", price:0} ] },
@@ -790,7 +795,7 @@
       const filtered = products
         .filter(p => matchesCategory(p) && matchesQuery(p))
         .slice()
-        .sort((a,b) => a.name.localeCompare(b.name, undefined, { sensitivity:"base" })); // alphabetical
+        .sort((a,b) => a.name.localeCompare(b.name, undefined, { sensitivity:"base" }));
 
       grid.innerHTML = filtered.map(cardTemplate).join("");
 
@@ -812,11 +817,9 @@
 
     function renderBenefitsForProductName(name){
       const benefits = benefitsMap[name] || [];
-      if (!benefits.length){
-        modalBenefits.innerHTML = "<li>Benefits info coming soon.</li>";
-        return;
-      }
-      modalBenefits.innerHTML = benefits.map(b => `<li>${escapeHtml(b)}</li>`).join("");
+      modalBenefits.innerHTML = benefits.length
+        ? benefits.map(b => `<li>${escapeHtml(b)}</li>`).join("")
+        : "<li>Benefits info coming soon.</li>";
     }
 
     function openModal(p){
@@ -850,6 +853,7 @@
         modalPrice.textContent = priceRangeText(p);
       }
 
+      // lock page; allow scrolling inside backdrop
       document.body.classList.add("modal-open");
       backdrop.style.display = "flex";
       setTimeout(() => closeModal.focus(), 0);
