@@ -11,86 +11,42 @@
       --muted:#6b7280;
       --border:#e5e7eb;
       --card:#ffffff;
-      --accent:#111827;
-      --pill:#111827;
-      --pillText:#ffffff;
       --price:#1d4ed8;
       --shadow: 0 10px 25px rgba(0,0,0,.06);
       --radius: 14px;
       --max: 1200px;
       --gap: 18px;
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
       background:var(--bg);
     }
 
-    /* Top bar */
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:50;
-      background:rgba(255,255,255,.92);
-      backdrop-filter: blur(10px);
+    /* Header image */
+    .hero{
+      width:100%;
       border-bottom:1px solid var(--border);
+      background:#fff;
     }
-    .topbar-inner{
+    .hero-inner{
       max-width:var(--max);
       margin:0 auto;
       padding:14px 16px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
     }
-    .brand{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      text-decoration:none;
-      color:inherit;
-    }
-    .brand-mark{
-      width:34px;height:34px;
-      border-radius:10px;
-      background:linear-gradient(135deg,#111827,#4b5563);
-    }
-    .brand-text{
-      display:flex; flex-direction:column; line-height:1.1;
-    }
-    .brand-text b{ font-size:14px; letter-spacing:.2px; }
-    .brand-text span{ font-size:12px; color:var(--muted); }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .icon-btn{
-      width:40px;height:40px;
+    .hero img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:16px;
       border:1px solid var(--border);
-      border-radius:12px;
-      background:#fff;
-      display:grid;
-      place-items:center;
-      cursor:pointer;
-    }
-    .icon-btn:active{ transform: translateY(1px); }
-    .icon{
-      width:18px;height:18px;
-      fill:none;
-      stroke:#111827;
-      stroke-width:2;
-      stroke-linecap:round;
-      stroke-linejoin:round;
+      box-shadow: var(--shadow);
+      object-fit:cover;
     }
 
-    /* Layout */
     .wrap{
       max-width:var(--max);
       margin:0 auto;
@@ -131,7 +87,7 @@
       display:flex;
       gap:10px;
       align-items:center;
-      min-width: min(420px, 100%);
+      min-width: min(520px, 100%);
     }
     .search input{
       width:100%;
@@ -142,7 +98,6 @@
       font-size:14px;
     }
 
-    /* Grid */
     .grid{
       display:grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -159,7 +114,6 @@
       .grid{ grid-template-columns: 1fr; }
     }
 
-    /* Product card */
     .card{
       border:1px solid var(--border);
       border-radius:var(--radius);
@@ -191,8 +145,10 @@
       border-radius:999px;
       padding:7px 10px;
       font-size:12px;
-      font-weight:700;
+      font-weight:800;
       letter-spacing:.2px;
+      text-align:center;
+      line-height:1.05;
     }
 
     .card-body{
@@ -203,7 +159,7 @@
       flex:1;
     }
     .title{
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.2px;
       font-size:16px;
       margin:0;
@@ -217,7 +173,7 @@
     }
     .price{
       margin-top:auto;
-      font-weight:800;
+      font-weight:900;
       color:var(--price);
       font-size:16px;
     }
@@ -247,7 +203,7 @@
       white-space:nowrap;
     }
 
-    /* Simple modal (for “view” only, no checkout) */
+    /* Modal - product page style */
     .modal-backdrop{
       position:fixed;
       inset:0;
@@ -259,21 +215,22 @@
       z-index:100;
     }
     .modal{
-      width:min(860px, 100%);
+      width:min(1100px, 100%);
       background:#fff;
       border-radius:18px;
       overflow:hidden;
       border:1px solid var(--border);
       box-shadow: 0 20px 50px rgba(0,0,0,.25);
       display:grid;
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1.25fr 1fr;
     }
-    @media (max-width: 840px){
+    @media (max-width: 900px){
       .modal{ grid-template-columns: 1fr; }
     }
     .modal-media{
+      position:relative;
       background:#f3f4f6;
-      min-height:320px;
+      min-height:360px;
     }
     .modal-media img{
       width:100%;
@@ -281,11 +238,29 @@
       object-fit:cover;
       display:block;
     }
+    .modal-badge{
+      position:absolute;
+      top:14px;
+      right:14px;
+      background:rgba(255,255,255,.95);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:12px;
+      font-weight:900;
+      line-height:1.05;
+      text-align:center;
+    }
+
     .modal-content{
-      padding:16px;
+      padding:18px;
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:12px;
+    }
+    .crumbs{
+      font-size:13px;
+      color:var(--muted);
     }
     .modal-top{
       display:flex;
@@ -295,18 +270,60 @@
     }
     .modal-title{
       margin:0;
-      font-size:18px;
-      font-weight:900;
+      font-size:34px;
+      font-weight:950;
+      letter-spacing:.2px;
     }
     .close{
       border:1px solid var(--border);
       background:#fff;
       border-radius:12px;
-      width:40px;height:40px;
+      width:42px;height:42px;
       cursor:pointer;
+      flex:0 0 auto;
     }
-    .modal-muted{ color:var(--muted); font-size:13px; }
-    .modal-price{ font-weight:900; color:var(--price); font-size:18px; }
+    .modal-price{
+      font-weight:950;
+      color:var(--price);
+      font-size:28px;
+    }
+
+    .row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .label{
+      min-width:52px;
+      font-size:14px;
+      font-weight:800;
+      color:#111827;
+    }
+    select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      background:#fff;
+      font-size:14px;
+      outline:none;
+    }
+
+    .info{
+      border-top:1px solid var(--border);
+      margin-top:6px;
+      padding-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-size:14px;
+    }
+    .kv{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .kv b{ font-weight:900; }
     .note{
       background:#f9fafb;
       border:1px solid var(--border);
@@ -319,32 +336,10 @@
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="#" aria-label="Home">
-        <div class="brand-mark" aria-hidden="true"></div>
-        <div class="brand-text">
-          <b>YOUR STORE NAME</b>
-          <span>Research catalog (no checkout)</span>
-        </div>
-      </a>
-
-      <div class="actions">
-        <button class="icon-btn" id="openSearch" title="Search">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M21 21l-4.3-4.3"></path>
-          </svg>
-        </button>
-        <button class="icon-btn" title="Cart (disabled)">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 6h15l-2 9H7L6 6Z"></path>
-            <path d="M6 6 5 3H2"></path>
-            <circle cx="9" cy="20" r="1"></circle>
-            <circle cx="18" cy="20" r="1"></circle>
-          </svg>
-        </button>
-      </div>
+  <!-- HEADER IMAGE (put header.png next to this index.html) -->
+  <header class="hero">
+    <div class="hero-inner">
+      <img src="header.png" alt="Header" />
     </div>
   </header>
 
@@ -352,7 +347,7 @@
     <div class="toolbar">
       <div class="filters" id="filters"></div>
 
-      <div class="search" id="searchBar">
+      <div class="search">
         <input id="searchInput" type="search" placeholder="Search products (name, mg, tags)..." />
       </div>
     </div>
@@ -360,24 +355,42 @@
     <section class="grid" id="grid"></section>
   </main>
 
-  <!-- Modal (view only) -->
+  <!-- Product page modal -->
   <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-label="Product details">
     <div class="modal">
       <div class="modal-media">
+        <div class="modal-badge" id="modalSoldOut" style="display:none;">SOLD<br>OUT</div>
         <img id="modalImg" alt="" />
       </div>
+
       <div class="modal-content">
         <div class="modal-top">
           <div>
+            <div class="crumbs" id="modalCrumbs">Home / Uncategorized /</div>
             <h3 class="modal-title" id="modalTitle"></h3>
-            <div class="modal-muted" id="modalMeta"></div>
           </div>
           <button class="close" id="closeModal" aria-label="Close">✕</button>
         </div>
+
         <div class="modal-price" id="modalPrice"></div>
-        <a class="coa" id="modalCoa" href="#" target="_blank" rel="noreferrer">View COA</a>
-        <div class="note">
-          Checkout is intentionally disabled. Use this page as a catalog and link out to COAs.
+
+        <div class="row">
+          <div class="label">Size:</div>
+          <select id="variantSelect" aria-label="Choose a size option"></select>
+        </div>
+
+        <div class="row" style="gap:12px;">
+          <a class="coa" id="modalCoa" href="#" target="_blank" rel="noreferrer">View COA</a>
+        </div>
+
+        <div class="info">
+          <div class="kv"><b>SKU:</b> <span id="modalSku"></span></div>
+          <div class="kv"><b>Category:</b> <span id="modalCategory"></span></div>
+          <div class="kv" style="color:var(--muted);" id="modalTags"></div>
+
+          <div class="note">
+            Checkout is intentionally disabled. This page is a catalog only.
+          </div>
         </div>
       </div>
     </div>
@@ -385,126 +398,112 @@
 
   <script>
     /**
-     * 2) EDIT YOUR PRODUCTS HERE
-     * - image: can be a local file path like "images/bpc-157.jpg" or a full URL
-     * - coaUrl: link to your COA PDF/page
-     * - priceText: "$35.00 – $135.00" or "$20.00"
-     * - mg: shown as metadata (optional)
-     * - tags: used for filtering/search (optional)
-     * - soldOut: shows badge (optional)
+     * Edit products here.
+     * Each product has variants (size options). Selecting a variant updates price.
      */
     const products = [
       {
-        id: "p1",
-        name: "Hospira Bac Water",
-        mg: "30mL",
-        priceText: "$20.00",
-        image: "https://images.unsplash.com/photo-1582719478185-2bb3c78f6b04?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["supplies", "water"],
-        soldOut: false
-      },
-      {
-        id: "p2",
-        name: "5-AMINO",
-        mg: "10mg",
-        priceText: "$40.00 – $255.00",
-        image: "https://images.unsplash.com/photo-1514361892635-e48c4c2b1d9b?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["peptide", "popular"],
-        soldOut: false
-      },
-      {
-        id: "p3",
-        name: "AOD",
-        mg: "5mg",
-        priceText: "$30.00 – $150.00",
-        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["peptide"],
-        soldOut: true
-      },
-      {
-        id: "p4",
+        id: "bpc-157",
         name: "BPC-157",
-        mg: "10mg",
-        priceText: "$35.00 – $135.00",
+        category: "Uncategorized",
+        sku: "CP-BPC157",
         image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
         tags: ["peptide"],
-        soldOut: true
+        soldOut: true,
+        variants: [
+          { label: "Single (10mg)", price: 35.00 },
+          { label: "Full-Kit (10 Vials)", price: 135.00 }
+        ]
       },
       {
-        id: "p5",
-        name: "Cagrilintide",
-        mg: "5mg",
-        priceText: "$—",
-        image: "https://images.unsplash.com/photo-1520975958225-9d6bbf8f07f7?auto=format&fit=crop&w=1400&q=60",
+        id: "aod",
+        name: "AOD",
+        category: "Uncategorized",
+        sku: "CP-AOD",
+        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
         tags: ["peptide"],
-        soldOut: false
+        soldOut: false,
+        variants: [
+          { label: "Single (5mg)", price: 30.00 },
+          { label: "2-Pack (5mg)", price: 55.00 },
+          { label: "Full-Kit (10 Vials)", price: 150.00 }
+        ]
       },
       {
-        id: "p6",
-        name: "CJC / IPA",
-        mg: "10mg",
-        priceText: "$—",
-        image: "https://images.unsplash.com/photo-1612538498456-e861df91d4d0?auto=format&fit=crop&w=1400&q=60",
+        id: "bac-water",
+        name: "Hospira Bac Water",
+        category: "Supplies",
+        sku: "CP-BACW30",
+        image: "https://images.unsplash.com/photo-1582719478185-2bb3c78f6b04?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
-        tags: ["peptide"],
-        soldOut: false
+        tags: ["supplies", "water"],
+        soldOut: false,
+        variants: [
+          { label: "30mL (Single)", price: 20.00 }
+        ]
       },
       {
-        id: "p7",
-        name: "DSIP",
-        mg: "10mg",
-        priceText: "$—",
-        image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1400&q=60",
-        coaUrl: "#",
-        tags: ["peptide"],
-        soldOut: true
-      },
-      {
-        id: "p8",
+        id: "ghk-cu",
         name: "GHK-Cu",
-        mg: "50mg",
-        priceText: "$—",
+        category: "Uncategorized",
+        sku: "CP-GHKCU50",
         image: "https://images.unsplash.com/photo-1520975693410-001d05d6f5c3?auto=format&fit=crop&w=1400&q=60",
         coaUrl: "#",
         tags: ["peptide"],
-        soldOut: false
+        soldOut: false,
+        variants: [
+          { label: "Single (50mg)", price: 0.00 } // placeholder
+        ]
       }
     ];
 
-    // Derived categories from tags (simple, editable)
     const categoryConfig = [
       { key: "all", label: "All" },
       { key: "peptide", label: "Peptides" },
       { key: "supplies", label: "Supplies" },
-      { key: "popular", label: "Popular" }
     ];
 
     const grid = document.getElementById("grid");
     const filtersEl = document.getElementById("filters");
     const searchInput = document.getElementById("searchInput");
-    const openSearch = document.getElementById("openSearch");
-    const searchBar = document.getElementById("searchBar");
 
     const backdrop = document.getElementById("backdrop");
     const closeModal = document.getElementById("closeModal");
     const modalImg = document.getElementById("modalImg");
     const modalTitle = document.getElementById("modalTitle");
-    const modalMeta = document.getElementById("modalMeta");
+    const modalCrumbs = document.getElementById("modalCrumbs");
     const modalPrice = document.getElementById("modalPrice");
     const modalCoa = document.getElementById("modalCoa");
+    const modalSku = document.getElementById("modalSku");
+    const modalCategory = document.getElementById("modalCategory");
+    const modalTags = document.getElementById("modalTags");
+    const modalSoldOut = document.getElementById("modalSoldOut");
+    const variantSelect = document.getElementById("variantSelect");
 
     let activeCategory = "all";
     let query = "";
+    let activeProduct = null;
 
     function escapeHtml(str){
       return String(str).replace(/[&<>"']/g, s => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
       }[s]));
+    }
+
+    function formatMoney(n){
+      if (typeof n !== "number" || isNaN(n) || n <= 0) return "$—";
+      return n.toLocaleString(undefined, { style: "currency", currency: "USD" });
+    }
+
+    function priceRangeText(p){
+      const prices = (p.variants || []).map(v => v.price).filter(x => typeof x === "number" && x > 0);
+      if (!prices.length) return "$—";
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      if (min === max) return formatMoney(min);
+      return `${formatMoney(min)} \u2013 ${formatMoney(max)}`;
     }
 
     function matchesCategory(p){
@@ -515,7 +514,9 @@
     function matchesQuery(p){
       if(!query.trim()) return true;
       const hay = [
-        p.name, p.mg, p.priceText, ...(p.tags || [])
+        p.name, p.sku, p.category,
+        ...(p.tags || []),
+        ...(p.variants || []).map(v => v.label)
       ].join(" ").toLowerCase();
       return hay.includes(query.trim().toLowerCase());
     }
@@ -538,8 +539,8 @@
     function cardTemplate(p){
       const badge = p.soldOut ? `<div class="badge">SOLD<br>OUT</div>` : "";
       const metaParts = [];
-      if(p.mg) metaParts.push(p.mg);
-      if(p.tags && p.tags.length) metaParts.push(p.tags.map(t => `#${t}`).join(" "));
+      if (p.category) metaParts.push(p.category);
+      if (p.sku) metaParts.push(p.sku);
       const meta = metaParts.join(" • ");
 
       return `
@@ -551,7 +552,7 @@
           <div class="card-body">
             <h3 class="title">${escapeHtml(p.name)}</h3>
             <div class="meta">${escapeHtml(meta)}</div>
-            <div class="price">${escapeHtml(p.priceText || "")}</div>
+            <div class="price">${escapeHtml(priceRangeText(p))}</div>
           </div>
           <div class="card-footer">
             <a class="coa" href="${escapeHtml(p.coaUrl || "#")}" target="_blank" rel="noreferrer">View COA</a>
@@ -574,28 +575,65 @@
       });
     }
 
+    function setModalPriceFromVariantIndex(idx){
+      if(!activeProduct) return;
+      const v = (activeProduct.variants || [])[idx];
+      if(!v) return;
+      modalPrice.textContent = formatMoney(v.price);
+    }
+
     function openModal(p){
+      activeProduct = p;
+
       modalImg.src = p.image;
       modalImg.alt = p.name;
       modalTitle.textContent = p.name;
-      modalMeta.textContent = [p.mg, ...(p.tags || []).map(t => `#${t}`)].filter(Boolean).join(" • ");
-      modalPrice.textContent = p.priceText || "";
+
+      const cat = p.category || "Uncategorized";
+      modalCrumbs.textContent = `Home / ${cat} /`;
+      modalSku.textContent = p.sku || "—";
+      modalCategory.textContent = cat;
+      modalTags.textContent = (p.tags && p.tags.length) ? p.tags.map(t => `#${t}`).join(" ") : "";
+
       modalCoa.href = p.coaUrl || "#";
+
+      // Sold out badge (top right like screenshot)
+      modalSoldOut.style.display = p.soldOut ? "block" : "none";
+
+      // Build dropdown (size options)
+      const variants = p.variants || [];
+      variantSelect.innerHTML = [
+        `<option value="" disabled selected>Choose an option</option>`,
+        ...variants.map((v, i) => `<option value="${i}">${escapeHtml(v.label)}</option>`)
+      ].join("");
+
+      // If only one variant, auto-select it
+      if (variants.length === 1){
+        variantSelect.value = "0";
+        setModalPriceFromVariantIndex(0);
+      } else {
+        // show range until user chooses
+        modalPrice.textContent = priceRangeText(p);
+      }
+
       backdrop.style.display = "flex";
     }
+
     function hideModal(){
       backdrop.style.display = "none";
+      activeProduct = null;
     }
+
+    // Dropdown changes update price
+    variantSelect.addEventListener("change", () => {
+      const idx = Number(variantSelect.value);
+      if (Number.isFinite(idx)) setModalPriceFromVariantIndex(idx);
+    });
 
     // Search
     searchInput.addEventListener("input", (e) => {
       query = e.target.value;
       renderGrid();
-    });
-
-    openSearch.addEventListener("click", () => {
-      searchInput.focus();
-      searchBar.scrollIntoView({ behavior:"smooth", block:"center" });
     });
 
     // Modal events
