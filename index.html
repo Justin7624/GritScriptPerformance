@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GritScript Catalog</title>
+
   <style>
     :root{
       /* Theme (matched to your header) */
@@ -20,7 +21,7 @@
 
       /* Accents */
       --accent:#c1121f;      /* red accent */
-      --price:#e5e7eb;       /* keep prices bright */
+      --price:#e5e7eb;       /* bright prices */
       --chip:#0b0f13;
       --chipActive:#101720;
     }
@@ -37,7 +38,7 @@
         var(--bg);
     }
 
-    /* Thin, full-width header banner */
+    /* Thin, full-width header banner (NO cropping; always readable) */
     .hero{
       width:100%;
       border-bottom:1px solid var(--border);
@@ -47,18 +48,27 @@
       width:100%;
       padding:10px 0 12px;
     }
-    .hero img{
+    .hero-banner{
       width:100%;
-      height:92px;                 /* thinner */
-      object-fit:cover;            /* crops to a wide banner */
-      object-position:center;
-      display:block;
+      height:88px;                /* thinner but readable */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;            /* matches header background */
       border-top:1px solid rgba(255,255,255,.06);
       border-bottom:1px solid rgba(255,255,255,.06);
-      background:#000;
+    }
+    .hero-banner img{
+      height:100%;
+      width:min(1400px, 100%);    /* wide on large screens */
+      object-fit:contain;         /* key: no cutoff */
+      object-position:center;
+      display:block;
+      padding:6px 14px;           /* breathing room */
     }
     @media (max-width: 640px){
-      .hero img{ height:74px; }
+      .hero-banner{ height:72px; }
+      .hero-banner img{ padding:6px 10px; }
     }
 
     .wrap{
@@ -394,10 +404,12 @@
 </head>
 
 <body>
-  <!-- Thin full-width banner header -->
+  <!-- Thin full-width banner header (scaled, not cropped) -->
   <header class="hero">
     <div class="hero-inner">
-      <img src="header.png" alt="Header" />
+      <div class="hero-banner">
+        <img src="header.png" alt="GritScript Performance" />
+      </div>
     </div>
   </header>
 
