@@ -212,21 +212,6 @@
       filter: contrast(1.02) saturate(.95);
     }
 
-    .badge{
-      position:absolute;
-      top:12px; left:12px;
-      background:rgba(0,0,0,.78);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:999px;
-      padding:8px 11px;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.2px;
-      text-align:center;
-      line-height:1.05;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-
     .card-body{
       padding:14px 14px 12px;
       display:flex;
@@ -259,7 +244,7 @@
       display:flex;
       gap:10px;
       align-items:center;
-      justify-content:flex-end; /* since COA removed */
+      justify-content:flex-end;
     }
 
     .view{
@@ -561,6 +546,7 @@
   <script>
     const PLACEHOLDER_IMG = "images/placeholder.jpg";
 
+    // Known benefits so far (you said you'll send the rest later)
     const benefitsMap = {
       "BPC-157": [
         "Helping sore or injured tendons, ligaments, and joints recover",
@@ -572,7 +558,7 @@
         "Helping with weight loss by making you feel full sooner",
         "Supporting portion control and fewer cravings"
       ],
-      "GHK-Cu": [
+      "GHK-CU": [
         "Improving skin look and texture (firmer, smoother)",
         "Supporting hair and scalp health",
         "Helping skin recover after irritation or damage"
@@ -634,55 +620,283 @@
       ]
     };
 
-    // Products + PRICES
-    // NOTE: Display order is forced alphabetical in renderGrid().
+    // Full stock from your catalog PDF:
+    // - Retatrutide = GLP-3RT (variants updated)
+    // - Tirzepatide = GLP2TZ (variants updated)
+    // Source: Gritscript Catalog.pdf pages 1–2 :contentReference[oaicite:0]{index=0}
     const products = [
-      { id:"bpc-157", name:"BPC-157", category:"Peptides", sku:"GS-BPC157", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:25} ] },
+      // Peptides
+      {
+        id:"5-amino",
+        name:"5-AMINO",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:35, sku:"GS-RP-5AM-10-001"} ]
+      },
+      {
+        id:"bpc-157",
+        name:"BPC-157",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-BPC-10-001"} ]
+      },
+      {
+        id:"cagrilintide",
+        name:"Cagrilintide",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"5mg", price:35, sku:"GS-RP-CAR-5-001"} ]
+      },
+      {
+        id:"cartalax",
+        name:"Cartalax",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"20mg", price:40, sku:"GS-RP-CARX-10-001"} ]
+      },
+      {
+        id:"cjc-ipa",
+        name:"CJC NO DAC + IPA",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-CJCIPA-10-001"} ]
+      },
+      {
+        id:"ghk-cu",
+        name:"GHK-CU",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[
+          {label:"50mg", price:25, sku:"GS-RP-GHK-50-001"},
+          {label:"100mg", price:50, sku:"GS-RP-GHK-100-001"}
+        ]
+      },
+      {
+        id:"glow",
+        name:"GLOW",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"70mg", price:70, sku:"GS-RP-GLW-10-001"} ]
+      },
+      {
+        id:"gluta",
+        name:"GLUTA",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[
+          {label:"600mg", price:40, sku:"GS-RP-GLU-10-001"},
+          {label:"1200mg", price:60, sku:"GS-RP-GLU-120-001"}
+        ]
+      },
+      {
+        id:"glp-3rt",
+        name:"GLP-3RT",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide","retatrutide"],
+        variants:[
+          {label:"15mg", price:55, sku:"GS-RP-RET-15-001"},
+          {label:"20mg", price:75, sku:"GS-RP-RET-20-001"},
+          {label:"30mg", price:100, sku:"GS-RP-RET-30-001"},
+          {label:"50mg", price:165, sku:"GS-RP-RET-50-001"},
+          {label:"60mg", price:195, sku:"GS-RP-RET-60-001"}
+        ]
+      },
+      {
+        id:"glp2tz",
+        name:"GLP2TZ",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide","tirzepatide"],
+        variants:[
+          {label:"10mg", price:30, sku:"GS-RP-TIR-10-001"},
+          {label:"20mg", price:60, sku:"GS-RP-TIR-20-001"},
+          {label:"30mg", price:85, sku:"GS-RP-TIR-30-001"},
+          {label:"50mg", price:120, sku:"GS-RP-TIR-50-001"}
+        ]
+      },
+      {
+        id:"klow",
+        name:"KLOW",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"80mg", price:85, sku:"GS-RP-KLW-80-001"} ]
+      },
+      {
+        id:"kpv",
+        name:"KPV",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-KPV-10-001"} ]
+      },
+      {
+        id:"mots-c",
+        name:"MOTS-C",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-MOT-10-001"} ]
+      },
+      {
+        id:"mt-2",
+        name:"MT-2",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-MT2-10-001"} ]
+      },
+      {
+        id:"nad-plus",
+        name:"NAD+",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"1000mg", price:40, sku:"GS-RP-NAD-1000-001"} ]
+      },
+      {
+        id:"oxytocin",
+        name:"Oxytocin",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-OXY-10-001"} ]
+      },
+      {
+        id:"pt-141",
+        name:"PT-141",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-PT141-10-001"} ]
+      },
+      {
+        id:"selank",
+        name:"Selank",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-SEL-10-001"} ]
+      },
+      {
+        id:"semax",
+        name:"Semax",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-SEM-10-001"} ]
+      },
+      {
+        id:"ss-31",
+        name:"SS-31",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:45, sku:"GS-RP-SS31-10-001"} ]
+      },
+      {
+        id:"tesamorelin",
+        name:"Tesamorelin",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:35, sku:"GS-RP-TESA-10-001"} ]
+      },
+      {
+        id:"thymosin-alpha",
+        name:"Thymosin Alpha",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:35, sku:"GS-RP-THA-10-001"} ]
+      },
+      {
+        id:"vip",
+        name:"VIP",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide"],
+        variants:[ {label:"10mg", price:45, sku:"GS-RP-VIP-10-001"} ]
+      },
+      {
+        id:"wolverine-stack",
+        name:"Wolverine Stack (BPC157/TB-500)",
+        category:"Peptides",
+        image:PLACEHOLDER_IMG,
+        tags:["peptide","stack"],
+        variants:[
+          {label:"10mg", price:35, sku:"GS-RP-WLV-10-001"},
+          {label:"20mg", price:55, sku:"GS-RP-WLV-20-001"}
+        ]
+      },
 
-      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", sku:"GS-CAGRILINTIDE", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"5mg", price:40} ] },
+      // Supplies
+      {
+        id:"hospira-bac",
+        name:"Hospira BAC 30mL",
+        category:"Supplies",
+        image:PLACEHOLDER_IMG,
+        tags:["supplies"],
+        variants:[ {label:"30mL", price:25, sku:"GS-RP-HOS-30-001"} ]
+      },
 
-      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", sku:"GS-GHKCU", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"50mg", price:35}, {label:"100mg", price:50} ] },
+      // Kits
+      {
+        id:"kit-retatrutide",
+        name:"Kit: Retatrutide",
+        category:"Kits",
+        image:PLACEHOLDER_IMG,
+        tags:["kits"],
+        variants:[
+          {label:"15mg (Kit)", price:300, sku:"GS-RPK-RET-15-001"},
+          {label:"20mg (Kit)", price:400, sku:"GS-RPK-RET-20-001"}
+        ]
+      },
+      {
+        id:"kit-tirzepatide",
+        name:"Kit: Tirzepatide",
+        category:"Kits",
+        image:PLACEHOLDER_IMG,
+        tags:["kits"],
+        variants:[ {label:"10mg (Kit)", price:150, sku:"GS-RPK-TIR-10-001"} ]
+      },
+      {
+        id:"kit-ghk-cu",
+        name:"Kit: GHK-CU",
+        category:"Kits",
+        image:PLACEHOLDER_IMG,
+        tags:["kits"],
+        variants:[
+          {label:"50mg (Kit)", price:200, sku:"GS-RPK-GHK-50-001"},
+          {label:"100mg (Kit)", price:300, sku:"GS-RPK-100-001"}
+        ]
+      },
 
-      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", sku:"GS-GLP3RT", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"15mg", price:65}, {label:"20mg", price:80} ] },
-
-      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", sku:"GS-GLP2TZ", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:50} ] },
-
-      { id:"klow", name:"KLOW", category:"Peptides", sku:"GS-KLOW", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"80mg", price:85} ] },
-
-      { id:"kpv", name:"KPV", category:"Peptides", sku:"GS-KPV", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:35} ] },
-
-      { id:"mots-c", name:"MOTS-C", category:"Peptides", sku:"GS-MOTSC", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:35} ] },
-
-      { id:"nad-plus", name:"NAD+", category:"Peptides", sku:"GS-NADPLUS", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"1000mg", price:50} ] },
-
-      { id:"selank", name:"Selank", category:"Peptides", sku:"GS-SELANK", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:35} ] },
-
-      { id:"semax", name:"Semax", category:"Peptides", sku:"GS-SEMAX", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:35} ] },
-
-      { id:"ss-31", name:"SS-31", category:"Peptides", sku:"GS-SS31", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:45} ] },
-
-      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", sku:"GS-TESAMORELIN", image:PLACEHOLDER_IMG, tags:["peptide"],
-        variants:[ {label:"10mg", price:45} ] },
-
-      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", sku:"GS-WOLVERINE", image:PLACEHOLDER_IMG, tags:["peptide","stack"],
-        variants:[ {label:"10mg", price:35}, {label:"20mg", price:60} ] },
+      // (Listed in Kits section)
+      {
+        id:"ghk-cu-face-serum-raw",
+        name:"GHK-CU Face Serum (Raw)",
+        category:"Supplies",
+        image:PLACEHOLDER_IMG,
+        tags:["supplies"],
+        variants:[ {label:"1 Gram Raw", price:45, sku:"GS-RP-GHKR-1G"} ]
+      }
     ];
 
     const categoryConfig = [
       { key: "all", label: "All" },
-      { key: "peptide", label: "Peptides" }
+      { key: "peptide", label: "Peptides" },
+      { key: "kits", label: "Kits" },
+      { key: "supplies", label: "Supplies" }
     ];
 
     const grid = document.getElementById("grid");
@@ -732,9 +946,9 @@
     function matchesQuery(p){
       if(!query.trim()) return true;
       const hay = [
-        p.name, p.sku, p.category,
+        p.name, (p.category || ""),
         ...(p.tags || []),
-        ...(p.variants || []).map(v => v.label)
+        ...(p.variants || []).map(v => `${v.label} ${v.sku || ""}`)
       ].join(" ").toLowerCase();
       return hay.includes(query.trim().toLowerCase());
     }
@@ -757,7 +971,6 @@
     function cardTemplate(p){
       const metaParts = [];
       if (p.category) metaParts.push(p.category);
-      if (p.sku) metaParts.push(p.sku);
       const meta = metaParts.join(" • ");
 
       return `
@@ -801,6 +1014,14 @@
         : "<li>Benefits info coming soon.</li>";
     }
 
+    function setModalFromVariantIndex(idx){
+      if(!activeProduct) return;
+      const v = (activeProduct.variants || [])[idx];
+      if(!v) return;
+      modalPrice.textContent = formatMoney(v.price);
+      modalSku.textContent = v.sku || "—";
+    }
+
     function openModal(p){
       activeProduct = p;
 
@@ -810,7 +1031,6 @@
 
       const cat = p.category || "Uncategorized";
       modalCrumbs.textContent = `Home / ${cat} /`;
-      modalSku.textContent = p.sku || "—";
       modalCategory.textContent = cat;
       modalTags.textContent = (p.tags && p.tags.length) ? p.tags.map(t => `#${t}`).join(" ") : "";
 
@@ -819,9 +1039,8 @@
       const variants = p.variants || [];
       variantSelect.innerHTML = variants.map((v, i) => `<option value="${i}">${escapeHtml(v.label)}</option>`).join("");
 
-      // Default to the first variant and show its price
       variantSelect.value = "0";
-      modalPrice.textContent = formatMoney(variants[0].price);
+      setModalFromVariantIndex(0);
 
       document.body.classList.add("modal-open");
       backdrop.style.display = "flex";
@@ -837,11 +1056,8 @@
     }
 
     variantSelect.addEventListener("change", () => {
-      if(!activeProduct) return;
       const idx = Number(variantSelect.value);
-      const v = (activeProduct.variants || [])[idx];
-      if(!v) return;
-      modalPrice.textContent = formatMoney(v.price);
+      if (Number.isFinite(idx)) setModalFromVariantIndex(idx);
     });
 
     searchInput.addEventListener("input", (e) => {
