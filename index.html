@@ -546,48 +546,8 @@
   <script>
     const PLACEHOLDER_IMG = "images/placeholder.jpg";
 
-    // Updated benefits (as provided)
+    // Updated benefits (per your latest message)
     const benefitsMap = {
-      "E-AMINO": [
-        "Supporting muscle recovery after workouts",
-        "Helping build and maintain lean muscle",
-        "Supporting energy and less soreness"
-      ],
-      "BPC-157": [
-        "Helping sore or injured tendons, ligaments, and joints recover",
-        "Calming swelling and irritation after strains/overuse",
-        "Supporting gut lining comfort (like stomach/intestinal irritation)"
-      ],
-      "Cagrilintide": [
-        "Reducing appetite and “food noise”",
-        "Helping with weight loss by making you feel full sooner",
-        "Supporting portion control and fewer cravings"
-      ],
-      "Cartalax": [
-        "Supporting joint comfort and movement",
-        "Helping cartilage stay healthier",
-        "Supporting recovery from joint wear-and-tear"
-      ],
-      "CJC No DAC + IPA": [
-        "Supporting natural growth-hormone release",
-        "Helping recovery from training and better sleep quality",
-        "Supporting body composition (more lean, less fat)"
-      ],
-      "GHK-CU": [
-        "Improving skin look and texture (firmer, smoother)",
-        "Supporting hair and scalp health",
-        "Helping skin recover after irritation or damage"
-      ],
-      "GHK-CU Face Serum (Raw)": [
-        "Supporting smoother, firmer-looking skin",
-        "Helping skin look more even and “glowy”",
-        "Supporting skin recovery from irritation"
-      ],
-      "GLOW": [
-        "Helping skin look brighter and more “glowy”",
-        "Supporting a more even-looking skin tone",
-        "Supporting smoother-looking skin texture"
-      ],
       "GLP-3RT": [
         "Lowering appetite and helping you feel full",
         "Supporting weight loss",
@@ -598,100 +558,140 @@
         "Supporting weight loss",
         "Helping blood sugar control and insulin response"
       ],
-      "GLUTA": [
-        "Supporting the body’s antioxidant defenses (less oxidative stress)",
-        "Supporting liver “clean-up” and overall recovery",
-        "Helping skin look brighter and more even"
+      "Cagrilintide": [
+        "Reducing appetite and “food noise”",
+        "Helping with weight loss by making you feel full sooner",
+        "Supporting portion control and fewer cravings"
       ],
-      "Hospira BAC 20ml": [
-        "Mixing and dissolving peptide powders into liquid",
-        "Diluting doses to make measuring easier",
-        "Helping keep mixed solutions cleaner for longer (bacteria-resistant)"
+      "BPC-157": [
+        "Helping sore or injured tendons, ligaments, and joints recover",
+        "Calming swelling and irritation after strains/overuse",
+        "Supporting gut lining comfort (like stomach/intestinal irritation)"
       ],
-      "Kit: GHK-CU": [
+      "Wolverine Stack (BPC157/TB-500)": [
+        "Faster recovery from strains, aches, and overuse",
+        "Supporting tendon/ligament and soft-tissue repair",
+        "Reducing inflammation and soreness during recovery"
+      ],
+      "GHK-CU": [
         "Improving skin look and texture (firmer, smoother)",
         "Supporting hair and scalp health",
         "Helping skin recover after irritation or damage"
-      ],
-      "Kit: Retatrutide": [
-        "Lowering appetite and helping you feel full longer",
-        "Supporting weight loss",
-        "Helping blood sugar control and insulin response"
-      ],
-      "Kit: Tirzepatide": [
-        "Lowering appetite and helping you feel full longer",
-        "Supporting weight loss",
-        "Helping blood sugar control and insulin response"
       ],
       "KLOW": [
         "Supporting overall recovery (muscles, tendons, soft tissue)",
         "Calming inflammation/irritation in the body",
         "Supporting gut comfort and immune balance"
       ],
-      "IPV": [
-        "Supporting calmer inflammation in the body",
-        "Supporting gut comfort and digestion",
-        "Supporting overall recovery and wellness"
-      ],
-      "MOTS-C": [
-        "Supporting energy use and metabolism",
-        "Helping the body handle blood sugar and fuel better",
-        "Supporting endurance and exercise recovery"
-      ],
-      "MT-2": [
-        "Helping the skin tan more easily",
-        "Supporting appetite control",
-        "Supporting sexual interest in some people"
-      ],
-      "NAD+": [
-        "Supporting cell energy (how your body makes and uses energy)",
-        "Supporting brain/mental energy and focus",
-        "Supporting healthy aging and recovery from stress"
-      ],
-      "Oxytocin": [
-        "Supporting bonding and social comfort",
-        "Supporting relaxation and lower stress feelings",
-        "Supporting sexual function and intimacy"
-      ],
-      "PT-141": [
-        "Supporting sexual desire",
-        "Supporting sexual arousal and performance",
-        "Supporting confidence around intimacy"
-      ],
-      "Selank": [
-        "Reducing anxious feelings and stress",
-        "Supporting calm focus",
-        "Supporting sleep quality (relaxation)"
+      "Tesamorelin": [
+        "Reducing deep belly fat (especially visceral fat)",
+        "Increasing natural growth-hormone signaling",
+        "Supporting body composition (more lean, less fat)"
       ],
       "Semax": [
         "Supporting focus and mental clarity",
         "Supporting memory and learning",
         "Supporting mental energy and motivation"
       ],
-      "SS-31": [
-        "Supporting cell “powerhouse” function (mitochondria)",
-        "Supporting energy, stamina, and fatigue resistance",
-        "Supporting recovery in tissues under stress (like muscles)"
+      "Selank": [
+        "Reducing anxious feelings and stress",
+        "Supporting calm focus",
+        "Supporting sleep quality (relaxation)"
       ],
-      "Tesamorelin": [
-        "Reducing deep belly fat (especially visceral fat)",
-        "Increasing natural growth-hormone signaling",
+      "KPV": [
+        "Calming inflammation (especially in the gut)",
+        "Supporting gut comfort and “calm” digestion",
+        "Helping soothe irritated skin or tissue"
+      ],
+      "Cartalax": [
+        "Supporting joint comfort and movement",
+        "Helping cartilage stay healthier",
+        "Supporting recovery from joint wear-and-tear"
+      ],
+      "MT-2": [
+        "Helping the skin tan more easily",
+        "Supporting appetite control",
+        "Supporting sexual interest in some people"
+      ],
+      "PT-141": [
+        "Supporting sexual desire",
+        "Supporting sexual arousal and performance",
+        "Supporting confidence around intimacy"
+      ],
+      "Oxytocin": [
+        "Supporting bonding and social comfort",
+        "Supporting relaxation and lower stress feelings",
+        "Supporting sexual function and intimacy"
+      ],
+      "GLOW": [
+        "Helping skin look brighter and more “glowy”",
+        "Supporting a more even-looking skin tone",
+        "Supporting smoother-looking skin texture"
+      ],
+      "5-AMINO": [
+        "Supporting fat loss while keeping muscle",
+        "Supporting energy during dieting or cutting",
+        "Supporting better body composition (more lean, less fat)"
+      ],
+      "CJC No DAC + IPA": [
+        "Supporting natural growth-hormone release",
+        "Helping recovery from training and better sleep quality",
         "Supporting body composition (more lean, less fat)"
       ],
-      "Thymosin Alpha": [
-        "Supporting immune system balance",
-        "Supporting recovery when you feel run-down",
-        "Supporting calmer inflammation in the body"
+      "GLUTA": [
+        "Supporting the body’s antioxidant defenses (less oxidative stress)",
+        "Supporting liver “clean-up” and overall recovery",
+        "Helping skin look brighter and more even"
       ],
       "VIP": [
         "Supporting calmer inflammation in the body",
         "Supporting gut comfort and digestion",
         "Supporting easier breathing and lung comfort"
       ],
-      "Wolverine Stack (BPC157/TB-500)": [
-        "Faster recovery from strains, aches, and overuse",
-        "Supporting tendon/ligament and soft-tissue repair",
-        "Reducing inflammation and soreness during recovery"
+      "Thymosin Alpha": [
+        "Supporting immune system balance",
+        "Supporting recovery when you feel run-down",
+        "Supporting calmer inflammation in the body"
+      ],
+      "SS-31": [
+        "Supporting cell “powerhouse” function (mitochondria)",
+        "Supporting energy, stamina, and fatigue resistance",
+        "Supporting recovery in tissues under stress (like muscles)"
+      ],
+      "MOTS-C": [
+        "Supporting energy use and metabolism",
+        "Helping the body handle blood sugar and fuel better",
+        "Supporting endurance and exercise recovery"
+      ],
+      "NAD+": [
+        "Supporting cell energy (how your body makes and uses energy)",
+        "Supporting brain/mental energy and focus",
+        "Supporting healthy aging and recovery from stress"
+      ],
+      "Hospira BAC 30mL": [
+        "Mixing and dissolving peptide powders into liquid",
+        "Diluting doses to make measuring easier",
+        "Helping keep mixed solutions cleaner for longer (bacteria-resistant)"
+      ],
+      "GHK-CU Face Serum (Raw)": [
+        "Supporting smoother, firmer-looking skin",
+        "Helping skin look more even and “glowy”",
+        "Supporting skin recovery from irritation"
+      ],
+      "Kit: Retatrutide": [
+        "Lowering appetite and helping you feel full",
+        "Supporting weight loss",
+        "Helping with blood sugar control (after-meal spikes)"
+      ],
+      "Kit: Tirzepatide": [
+        "Lowering appetite and helping you feel full longer",
+        "Supporting weight loss",
+        "Helping blood sugar control and insulin response"
+      ],
+      "Kit: GHK-CU": [
+        "Improving skin look and texture (firmer, smoother)",
+        "Supporting hair and scalp health",
+        "Helping skin recover after irritation or damage"
       ]
     };
 
@@ -789,8 +789,8 @@
           {label:"20mg", price:55, sku:"GS-RP-WLV-20-001"}
         ] },
 
-      { id:"hospira-bac", name:"Hospira BAC 20ml", category:"Supplies", image:PLACEHOLDER_IMG, tags:["supplies"],
-        variants:[ {label:"20mL", price:25, sku:"GS-RP-HOS-20-001"} ] },
+      { id:"hospira-bac", name:"Hospira BAC 30mL", category:"Supplies", image:PLACEHOLDER_IMG, tags:["supplies"],
+        variants:[ {label:"30mL", price:25, sku:"GS-RP-HOS-30-001"} ] },
 
       { id:"kit-retatrutide", name:"Kit: Retatrutide", category:"Kits", image:PLACEHOLDER_IMG, tags:["kits"],
         variants:[
