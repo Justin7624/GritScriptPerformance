@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GritScript Catalog</title>
+
+  <style>
+    :root{
+      --bg:#050607;
+      --text:#e5e7eb;
+      --muted:#9aa3ad;
+      --border:#1c232c;
+      --shadow: 0 18px 40px rgba(0,0,0,.55);
+      --radius: 14px;
+      --max: 1240px;
+      --gap: 18px;
+      --accent:#c1121f;
+      --chip:#0b0f13;
+      --chipActive:#101720;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      background: var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Black cascading to red (consistent on PC + phone) */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:
+        linear-gradient(180deg,
+          #040506 0%,
+          #060709 38%,
+          #060709 60%,
+          rgba(80, 8, 14, 0.65) 100%
+        );
+    }
+
+    /* Controlled glow layer */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      background:
+        radial-gradient(900px 600px at 12% 6%, rgba(229,231,235,.06), transparent 60%),
+        radial-gradient(900px 700px at 85% 12%, rgba(193,18,31,.10), transparent 62%),
+        radial-gradient(1100px 900px at 50% 110%, rgba(193,18,31,.16), transparent 62%);
+      pointer-events:none;
+    }
+
+    @media (max-width: 640px){
+      body::after{
+        background:
+          radial-gradient(800px 520px at 12% 6%, rgba(229,231,235,.05), transparent 62%),
+          radial-gradient(800px 600px at 85% 12%, rgba(193,18,31,.07), transparent 64%),
+          radial-gradient(900px 760px at 50% 112%, rgba(193,18,31,.10), transparent 66%);
+      }
+      body::before{
+        background:
+          linear-gradient(180deg,
+            #040506 0%,
+            #060709 50%,
+            rgba(65, 6, 10, 0.55) 100%
+          );
+      }
+    }
+
+    /* Header (thin, full-width, NOT cropped) */
+    .hero{
+      width:100%;
+      border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+    }
+    .hero-inner{ width:100%; padding:10px 0 12px; }
+    .hero-banner{
+      width:100%;
+      height:84px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      border-top:1px solid rgba(255,255,255,.06);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .hero-banner img{
+      height:100%;
+      width:min(1400px, 100%);
+      object-fit:contain;
+      object-position:center;
+      display:block;
+      padding:6px 14px;
+    }
+    @media (max-width: 640px){
+      .hero-banner{ height:68px; }
+      .hero-banner img{ padding:6px 10px; }
+    }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 16px 90px;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin:14px 0 16px;
+    }
+
+    .filters{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      border:1px solid var(--border);
+      background:var(--chip);
+      padding:9px 12px;
+      border-radius:999px;
+      font-size:13px;
+      cursor:pointer;
+      color:var(--text);
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      white-space:nowrap;
+    }
+    .chip:hover{ border-color: rgba(193,18,31,.55); }
+    .chip:active{ transform: translateY(1px); }
+    .chip[data-active="true"]{
+      background:var(--chipActive);
+      border-color: rgba(193,18,31,.8);
+      box-shadow: 0 0 0 2px rgba(193,18,31,.12) inset;
+      font-weight:700;
+    }
+
+    .search{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      min-width: min(520px, 100%);
+    }
+    .search input{
+      width:100%;
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none;
+      font-size:14px;
+      color:var(--text);
+      background: rgba(255,255,255,.03);
+    }
+    .search input::placeholder{ color: rgba(229,231,235,.55); }
+    .search input:focus{
+      border-color: rgba(193,18,31,.8);
+      box-shadow: 0 0 0 3px rgba(193,18,31,.12);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:var(--gap);
+    }
+    @media (max-width: 1100px){
+      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 760px){
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .search{ min-width:100%; }
+    }
+    @media (max-width: 440px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height: 320px;
+    }
+
+    .thumb{
+      position:relative;
+      aspect-ratio: 4 / 3;
+      background:#0a0d10;
+      overflow:hidden;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.02);
+      filter: contrast(1.02) saturate(.95);
+    }
+
+    .card-body{
+      padding:14px 14px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex:1;
+    }
+    .title{
+      font-weight:900;
+      letter-spacing:.25px;
+      font-size:16px;
+      margin:0;
+    }
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .price{
+      margin-top:auto;
+      font-weight:950;
+      color:#ffffff;
+      font-size:16px;
+    }
+
+    .card-footer{
+      padding:0 14px 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .view{
+      font-size:13px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:9px 11px;
+      border-radius:12px;
+      cursor:pointer;
+      white-space:nowrap;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+    }
+    .view:hover{
+      border-color: rgba(193,18,31,.65);
+      background: rgba(193,18,31,.10);
+    }
+    .view:active{ transform: translateY(1px); }
+
+    /* Modal backdrop */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+      z-index:1000;
+      background: rgba(0,0,0,.55);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Modal container + red highlight */
+    .modal{
+      width:min(1120px, 100%);
+      border-radius:18px;
+      overflow:hidden;
+
+      border:1px solid rgba(193,18,31,.55);
+      box-shadow:
+        0 0 0 2px rgba(193,18,31,.18) inset,
+        0 0 0 1px rgba(193,18,31,.22),
+        0 30px 80px rgba(0,0,0,.70),
+        0 0 38px rgba(193,18,31,.22);
+
+      background:
+        radial-gradient(900px 600px at 85% 30%, rgba(193,18,31,.12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+
+      display:grid;
+      grid-template-columns: 1.25fr 1fr;
+      max-height:none;
+      margin:auto;
+
+      transform: translateY(8px) scale(.985);
+      opacity: 0;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .modal-backdrop.is-open .modal{
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal-media{
+      position:relative;
+      background:#07090b;
+      border-right:1px solid rgba(193,18,31,.14);
+      min-height: 360px;
+    }
+    .modal-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter: contrast(1.02) saturate(.95);
+    }
+
+    .modal-content{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .crumbs{
+      font-size:13px;
+      color:var(--muted);
+    }
+    .modal-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:34px;
+      font-weight:950;
+      letter-spacing:.25px;
+    }
+
+    .close{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      border-radius:12px;
+      width:44px;height:44px;
+      cursor:pointer;
+      flex:0 0 auto;
+      transition: border-color .15s ease, background .15s ease, transform .06s ease;
+    }
+    .close:hover{
+      border-color: rgba(193,18,31,.7);
+      background: rgba(193,18,31,.10);
+    }
+    .close:active{ transform: translateY(1px); }
+
+    .modal-price{
+      font-weight:950;
+      color:#ffffff;
+      font-size:28px;
+    }
+    .modal-price::after{
+      content:"";
+      display:block;
+      height:2px;
+      width:72px;
+      margin-top:10px;
+      background: linear-gradient(90deg, rgba(193,18,31,1), rgba(193,18,31,0));
+      border-radius:999px;
+    }
+
+    .row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .label{
+      min-width:52px;
+      font-size:14px;
+      font-weight:900;
+      color:var(--text);
+    }
+    select{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:10px;
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      font-size:14px;
+      outline:none;
+    }
+    select:focus{
+      border-color: rgba(193,18,31,.8);
+      box-shadow: 0 0 0 3px rgba(193,18,31,.12);
+    }
+
+    .section{
+      border-top:1px solid rgba(255,255,255,.10);
+      margin-top:6px;
+      padding-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .benefits-title{
+      font-weight:950;
+      letter-spacing:.2px;
+      margin:0;
+      font-size:14px;
+      color:#fff;
+    }
+
+    .benefits{
+      margin:0;
+      padding-left:18px;
+      color: rgba(229,231,235,.92);
+      line-height:1.35;
+      font-size:14px;
+    }
+    .benefits li{ margin:6px 0; }
+
+    .info{
+      border-top:1px solid rgba(255,255,255,.10);
+      margin-top:2px;
+      padding-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-size:14px;
+    }
+    .kv{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      color: rgba(229,231,235,.92);
+    }
+    .kv b{ font-weight:950; color:#fff; }
+    .note{
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.10);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      color: rgba(229,231,235,.85);
+    }
+
+    @media (max-width: 900px){
+      .modal{
+        grid-template-columns: 1fr;
+        width: min(720px, 100%);
+      }
+      .modal-media{
+        border-right:none;
+        border-bottom:1px solid rgba(193,18,31,.14);
+        height: 40vh;
+        min-height: 240px;
+      }
+      .modal-title{ font-size:28px; }
+      .modal-price{ font-size:24px; }
+    }
+
+    body.modal-open{
+      overflow:hidden;
+      height:100%;
+      touch-action:none;
+    }
+    body.modal-open .modal-backdrop{
+      touch-action:auto;
+    }
+  
+
+    /* ===== Order Form CTA (added) ===== */
+    .right-actions{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:flex-end;
+      flex: 1 1 auto;
+      flex-wrap:wrap;
+    }
+    .order-cta{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:11px 14px;
+      border-radius:12px;
+      border:1px solid rgba(193,18,31,.75);
+      background: rgba(193,18,31,.16);
+      color: var(--text);
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.2px;
+      text-decoration:none;
+      white-space:nowrap;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      box-shadow: 0 0 0 2px rgba(193,18,31,.10) inset;
+    }
+    .order-cta:hover{
+      border-color: rgba(193,18,31,.95);
+      background: rgba(193,18,31,.22);
+    }
+    .order-cta:active{ transform: translateY(1px); }
+
+    /* Toolbar layout tweaks for small screens */
+    @media (max-width: 760px){
+      .right-actions{ width:100%; justify-content:space-between; }
+      .order-cta{ width:100%; }
+    }
+    /* ===== /Order Form CTA ===== */
+
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-banner">
+        <img src="header.png" alt="GritScript Performance" />
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <div class="filters" id="filters"></div>
+
+      <div class="right-actions">
+        <div class="search">
+          <input id="searchInput" type="search" placeholder="Search products (name, mg, tags)..." />
+        </div>
+
+        <a class="order-cta" href="https://form.jotform.com/PepPlug/gritscripts-performance" target="_blank" rel="noopener">
+          Place an Order
+        </a>
+      </div>
+    </div>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="modal" role="document">
+      <div class="modal-media">
+        <img id="modalImg" alt="" />
+      </div>
+
+      <div class="modal-content">
+        <div class="modal-top">
+          <div>
+            <div class="crumbs" id="modalCrumbs">Home / Peptides /</div>
+            <h3 class="modal-title" id="modalTitle"></h3>
+          </div>
+          <button class="close" id="closeModal" aria-label="Close">✕</button>
+        </div>
+
+        <div class="modal-price" id="modalPrice"></div>
+
+        <div class="row">
+          <div class="label">Size:</div>
+          <select id="variantSelect" aria-label="Choose a size option"></select>
+        </div>
+
+        <div class="section">
+          <p class="benefits-title">What it’s commonly used for:</p>
+          <ul class="benefits" id="modalBenefits"></ul>
+        </div>
+
+        <div class="info">
+          <div class="kv"><b>SKU:</b> <span id="modalSku"></span></div>
+          <div class="kv"><b>Category:</b> <span id="modalCategory"></span></div>
+          <div class="kv" style="color:var(--muted);" id="modalTags"></div>
+
+          <div class="note">
+            Checkout is intentionally disabled on this page (catalog only).<br />
+            <a href="https://form.jotform.com/PepPlug/gritscripts-performance" target="_blank" rel="noopener" style="color:var(--text); font-weight:900; text-decoration:underline;">
+              Place orders on the Order Form →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PLACEHOLDER_IMG = "images/placeholder.jpg";
+
+    // Updated benefits (per your latest message)
+    const benefitsMap = {
+      "GLP-3RT": [
+        "Lowering appetite and helping you feel full",
+        "Supporting weight loss",
+        "Helping with blood sugar control (after-meal spikes)"
+      ],
+      "GLP2TZ": [
+        "Lowering appetite and helping you feel full longer",
+        "Supporting weight loss",
+        "Helping blood sugar control and insulin response"
+      ],
+      "Cagrilintide": [
+        "Reducing appetite and “food noise”",
+        "Helping with weight loss by making you feel full sooner",
+        "Supporting portion control and fewer cravings"
+      ],
+      "BPC-157": [
+        "Helping sore or injured tendons, ligaments, and joints recover",
+        "Calming swelling and irritation after strains/overuse",
+        "Supporting gut lining comfort (like stomach/intestinal irritation)"
+      ],
+      "Wolverine Stack (BPC157/TB-500)": [
+        "Faster recovery from strains, aches, and overuse",
+        "Supporting tendon/ligament and soft-tissue repair",
+        "Reducing inflammation and soreness during recovery"
+      ],
+      "GHK-CU": [
+        "Improving skin look and texture (firmer, smoother)",
+        "Supporting hair and scalp health",
+        "Helping skin recover after irritation or damage"
+      ],
+      "KLOW": [
+        "Supporting overall recovery (muscles, tendons, soft tissue)",
+        "Calming inflammation/irritation in the body",
+        "Supporting gut comfort and immune balance"
+      ],
+      "Tesamorelin": [
+        "Reducing deep belly fat (especially visceral fat)",
+        "Increasing natural growth-hormone signaling",
+        "Supporting body composition (more lean, less fat)"
+      ],
+      "Semax": [
+        "Supporting focus and mental clarity",
+        "Supporting memory and learning",
+        "Supporting mental energy and motivation"
+      ],
+      "Selank": [
+        "Reducing anxious feelings and stress",
+        "Supporting calm focus",
+        "Supporting sleep quality (relaxation)"
+      ],
+      "KPV": [
+        "Calming inflammation (especially in the gut)",
+        "Supporting gut comfort and “calm” digestion",
+        "Helping soothe irritated skin or tissue"
+      ],
+      "Cartalax": [
+        "Supporting joint comfort and movement",
+        "Helping cartilage stay healthier",
+        "Supporting recovery from joint wear-and-tear"
+      ],
+      "MT-2": [
+        "Helping the skin tan more easily",
+        "Supporting appetite control",
+        "Supporting sexual interest in some people"
+      ],
+      "PT-141": [
+        "Supporting sexual desire",
+        "Supporting sexual arousal and performance",
+        "Supporting confidence around intimacy"
+      ],
+      "Oxytocin": [
+        "Supporting bonding and social comfort",
+        "Supporting relaxation and lower stress feelings",
+        "Supporting sexual function and intimacy"
+      ],
+      "GLOW": [
+        "Helping skin look brighter and more “glowy”",
+        "Supporting a more even-looking skin tone",
+        "Supporting smoother-looking skin texture"
+      ],
+      "5-AMINO": [
+        "Supporting fat loss while keeping muscle",
+        "Supporting energy during dieting or cutting",
+        "Supporting better body composition (more lean, less fat)"
+      ],
+      "CJC No DAC + IPA": [
+        "Supporting natural growth-hormone release",
+        "Helping recovery from training and better sleep quality",
+        "Supporting body composition (more lean, less fat)"
+      ],
+      "GLUTA": [
+        "Supporting the body’s antioxidant defenses (less oxidative stress)",
+        "Supporting liver “clean-up” and overall recovery",
+        "Helping skin look brighter and more even"
+      ],
+      "VIP": [
+        "Supporting calmer inflammation in the body",
+        "Supporting gut comfort and digestion",
+        "Supporting easier breathing and lung comfort"
+      ],
+      "Thymosin Alpha": [
+        "Supporting immune system balance",
+        "Supporting recovery when you feel run-down",
+        "Supporting calmer inflammation in the body"
+      ],
+      "SS-31": [
+        "Supporting cell “powerhouse” function (mitochondria)",
+        "Supporting energy, stamina, and fatigue resistance",
+        "Supporting recovery in tissues under stress (like muscles)"
+      ],
+      "MOTS-C": [
+        "Supporting energy use and metabolism",
+        "Helping the body handle blood sugar and fuel better",
+        "Supporting endurance and exercise recovery"
+      ],
+      "NAD+": [
+        "Supporting cell energy (how your body makes and uses energy)",
+        "Supporting brain/mental energy and focus",
+        "Supporting healthy aging and recovery from stress"
+      ],
+      "Hospira BAC 30mL": [
+        "Mixing and dissolving peptide powders into liquid",
+        "Diluting doses to make measuring easier",
+        "Helping keep mixed solutions cleaner for longer (bacteria-resistant)"
+      ],
+      "GHK-CU Face Serum (Raw)": [
+        "Supporting smoother, firmer-looking skin",
+        "Helping skin look more even and “glowy”",
+        "Supporting skin recovery from irritation"
+      ],
+      "Kit: Retatrutide": [
+        "Lowering appetite and helping you feel full",
+        "Supporting weight loss",
+        "Helping with blood sugar control (after-meal spikes)"
+      ],
+      "Kit: Tirzepatide": [
+        "Lowering appetite and helping you feel full longer",
+        "Supporting weight loss",
+        "Helping blood sugar control and insulin response"
+      ],
+      "Kit: GHK-CU": [
+        "Improving skin look and texture (firmer, smoother)",
+        "Supporting hair and scalp health",
+        "Helping skin recover after irritation or damage"
+      ]
+    };
+
+    // Full stock (unchanged from last version)
+    const products = [
+      { id:"5-amino", name:"5-AMINO", category:"Peptides", image:"5-amino.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:35, sku:"GS-RP-5AM-10-001"} ] },
+
+      { id:"bpc-157", name:"BPC-157", category:"Peptides", image:"BPC-157.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-BPC-10-001"} ] },
+
+      { id:"cagrilintide", name:"Cagrilintide", category:"Peptides", image:"BPC157+TB500.jpg", tags:["peptide"],
+        variants:[ {label:"5mg", price:35, sku:"GS-RP-CAR-5-001"} ] },
+
+      { id:"cartalax", name:"Cartalax", category:"Peptides", image:"Cartalax.jpg", tags:["peptide"],
+        variants:[ {label:"20mg", price:40, sku:"GS-RP-CARX-10-001"} ] },
+
+      { id:"cjc-ipa", name:"CJC No DAC + IPA", category:"Peptides", image:"CJC(nodac)+IPA.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-CJCIPA-10-001"} ] },
+
+      { id:"ghk-cu", name:"GHK-CU", category:"Peptides", image:"GHKCU.jpg", tags:["peptide"],
+        variants:[
+          {label:"50mg", price:25, sku:"GS-RP-GHK-50-001"},
+          {label:"100mg", price:50, sku:"GS-RP-GHK-100-001"}
+        ] },
+
+      { id:"glow", name:"GLOW", category:"Peptides", image:"GLOW.jpg", tags:["peptide"],
+        variants:[ {label:"70mg", price:70, sku:"GS-RP-GLW-10-001"} ] },
+
+      { id:"gluta", name:"GLUTA", category:"Peptides", image:"GLUTA.jpg", tags:["peptide"],
+        variants:[
+          {label:"600mg", price:40, sku:"GS-RP-GLU-10-001"},
+          {label:"1200mg", price:60, sku:"GS-RP-GLU-120-001"}
+        ] },
+
+      { id:"glp-3rt", name:"GLP-3RT", category:"Peptides", image:"GLP-3RT.jpg", tags:["peptide","retatrutide"],
+        variants:[
+          {label:"15mg", price:55, sku:"GS-RP-RET-15-001"},
+          {label:"20mg", price:75, sku:"GS-RP-RET-20-001"},
+          {label:"30mg", price:100, sku:"GS-RP-RET-30-001"},
+          {label:"50mg", price:165, sku:"GS-RP-RET-50-001"},
+          {label:"60mg", price:195, sku:"GS-RP-RET-60-001"}
+        ] },
+
+      { id:"glp2tz", name:"GLP2TZ", category:"Peptides", image:"GLP-2T.jpg", tags:["peptide","tirzepatide"],
+        variants:[
+          {label:"10mg", price:30, sku:"GS-RP-TIR-10-001"},
+          {label:"20mg", price:60, sku:"GS-RP-TIR-20-001"},
+          {label:"30mg", price:85, sku:"GS-RP-TIR-30-001"},
+          {label:"50mg", price:120, sku:"GS-RP-TIR-50-001"}
+        ] },
+
+      { id:"klow", name:"KLOW", category:"Peptides", image:"KLOW.jpg", tags:["peptide"],
+        variants:[ {label:"80mg", price:85, sku:"GS-RP-KLW-80-001"} ] },
+
+      { id:"kpv", name:"KPV", category:"Peptides", image:"KPV.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-KPV-10-001"} ] },
+
+      { id:"mots-c", name:"MOTS-C", category:"Peptides", image:"MOTS-c.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-MOT-10-001"} ] },
+
+      { id:"mt-2", name:"MT-2", category:"Peptides", image:"MT-2.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-MT2-10-001"} ] },
+
+      { id:"nad-plus", name:"NAD+", category:"Peptides", image:"NAD+.jpg", tags:["peptide"],
+        variants:[ {label:"1000mg", price:40, sku:"GS-RP-NAD-1000-001"} ] },
+
+      { id:"oxytocin", name:"Oxytocin", category:"Peptides", image:"Oxytocin.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-OXY-10-001"} ] },
+
+      { id:"pt-141", name:"PT-141", category:"Peptides", image:"PT-141.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-PT141-10-001"} ] },
+
+      { id:"selank", name:"Selank", category:"Peptides", image:"Selank.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-SEL-10-001"} ] },
+
+      { id:"semax", name:"Semax", category:"Peptides", image:"Semax.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:30, sku:"GS-RP-SEM-10-001"} ] },
+
+      { id:"ss-31", name:"SS-31", category:"Peptides", image:"SS-31.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:45, sku:"GS-RP-SS31-10-001"} ] },
+
+      { id:"tesamorelin", name:"Tesamorelin", category:"Peptides", image:"Tesamorelin.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:35, sku:"GS-RP-TESA-10-001"} ] },
+
+      { id:"thymosin-alpha", name:"Thymosin Alpha", category:"Peptides", image:"Thymosin alpha.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:35, sku:"GS-RP-THA-10-001"} ] },
+
+      { id:"vip", name:"VIP", category:"Peptides", image:"VIP.jpg", tags:["peptide"],
+        variants:[ {label:"10mg", price:45, sku:"GS-RP-VIP-10-001"} ] },
+
+      { id:"wolverine-stack", name:"Wolverine Stack (BPC157/TB-500)", category:"Peptides", image:"BPC157+TB500.jpg", tags:["peptide","stack"],
+        variants:[
+          {label:"10mg", price:35, sku:"GS-RP-WLV-10-001"},
+          {label:"20mg", price:55, sku:"GS-RP-WLV-20-001"}
+        ] },
+
+      { id:"hospira-bac", name:"Hospira BAC 30mL", category:"Supplies", image:"Bac water.jpg", tags:["supplies"],
+        variants:[ {label:"30mL", price:25, sku:"GS-RP-HOS-30-001"} ] },
+
+      { id:"kit-retatrutide", name:"Kit: Retatrutide", category:"Kits", image:"GLP-3RT.jpg", tags:["kits"],
+        variants:[
+          {label:"15mg (Kit)", price:300, sku:"GS-RPK-RET-15-001"},
+          {label:"20mg (Kit)", price:400, sku:"GS-RPK-RET-20-001"}
+        ] },
+
+      { id:"kit-tirzepatide", name:"Kit: Tirzepatide", category:"Kits", image:"GLP-2T.jpg", tags:["kits"],
+        variants:[ {label:"10mg (Kit)", price:150, sku:"GS-RPK-TIR-10-001"} ] },
+
+      { id:"kit-ghk-cu", name:"Kit: GHK-CU", category:"Kits", image:"GHKCU.jpg", tags:["kits"],
+        variants:[
+          {label:"50mg (Kit)", price:200, sku:"GS-RPK-GHK-50-001"},
+          {label:"100mg (Kit)", price:300, sku:"GS-RPK-100-001"}
+        ] },
+
+      { id:"ghk-cu-face-serum-raw", name:"GHK-CU Face Serum (Raw)", category:"Supplies", image:"GHK serum.jpg", tags:["supplies"],
+        variants:[ {label:"1 Gram Raw", price:45, sku:"GS-RP-GHKR-1G"} ] }
+    ];
+
+    const categoryConfig = [
+      { key: "all", label: "All" },
+      { key: "peptide", label: "Peptides" },
+      { key: "kits", label: "Kits" },
+      { key: "supplies", label: "Supplies" }
+    ];
+
+    const grid = document.getElementById("grid");
+    const filtersEl = document.getElementById("filters");
+    const searchInput = document.getElementById("searchInput");
+
+    const backdrop = document.getElementById("backdrop");
+    const closeModal = document.getElementById("closeModal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalCrumbs = document.getElementById("modalCrumbs");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalSku = document.getElementById("modalSku");
+    const modalCategory = document.getElementById("modalCategory");
+    const modalTags = document.getElementById("modalTags");
+    const variantSelect = document.getElementById("variantSelect");
+    const modalBenefits = document.getElementById("modalBenefits");
+
+    let activeCategory = "all";
+    let query = "";
+    let activeProduct = null;
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    function formatMoney(n){
+      return n.toLocaleString(undefined, { style: "currency", currency: "USD" });
+    }
+
+    function priceRangeText(p){
+      const prices = (p.variants || []).map(v => v.price).filter(x => typeof x === "number");
+      if (!prices.length) return "$—";
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      if (min === max) return formatMoney(min);
+      return `${formatMoney(min)} \u2013 ${formatMoney(max)}`;
+    }
+
+    function matchesCategory(p){
+      if(activeCategory === "all") return true;
+      return (p.tags || []).includes(activeCategory);
+    }
+
+    function matchesQuery(p){
+      if(!query.trim()) return true;
+      const hay = [
+        p.name, (p.category || ""),
+        ...(p.tags || []),
+        ...(p.variants || []).map(v => `${v.label} ${v.sku || ""}`)
+      ].join(" ").toLowerCase();
+      return hay.includes(query.trim().toLowerCase());
+    }
+
+    function renderFilters(){
+      filtersEl.innerHTML = categoryConfig.map(c => {
+        const active = c.key === activeCategory ? "true" : "false";
+        return `<button class="chip" data-key="${c.key}" data-active="${active}">${escapeHtml(c.label)}</button>`;
+      }).join("");
+
+      filtersEl.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeCategory = btn.dataset.key;
+          renderFilters();
+          renderGrid();
+        });
+      });
+    }
+
+    function cardTemplate(p){
+      const metaParts = [];
+      if (p.category) metaParts.push(p.category);
+      const meta = metaParts.join(" • ");
+
+      return `
+        <article class="card">
+          <div class="thumb">
+            <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" />
+          </div>
+          <div class="card-body">
+            <h3 class="title">${escapeHtml(p.name)}</h3>
+            <div class="meta">${escapeHtml(meta)}</div>
+            <div class="price">${escapeHtml(priceRangeText(p))}</div>
+          </div>
+          <div class="card-footer">
+            <button class="view" data-id="${escapeHtml(p.id)}">View</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderGrid(){
+      const filtered = products
+        .filter(p => matchesCategory(p) && matchesQuery(p))
+        .slice()
+        .sort((a,b) => a.name.localeCompare(b.name, undefined, { sensitivity:"base" }));
+
+      grid.innerHTML = filtered.map(cardTemplate).join("");
+
+      grid.querySelectorAll(".view").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const p = products.find(x => x.id === btn.dataset.id);
+          if(!p) return;
+          openModal(p);
+        });
+      });
+    }
+
+    function renderBenefitsForProductName(name){
+      const benefits = benefitsMap[name] || [];
+      modalBenefits.innerHTML = benefits.length
+        ? benefits.map(b => `<li>${escapeHtml(b)}</li>`).join("")
+        : "<li>Benefits info coming soon.</li>";
+    }
+
+    function setModalFromVariantIndex(idx){
+      if(!activeProduct) return;
+      const v = (activeProduct.variants || [])[idx];
+      if(!v) return;
+      modalPrice.textContent = formatMoney(v.price);
+      modalSku.textContent = v.sku || "—";
+    }
+
+    function openModal(p){
+      activeProduct = p;
+
+      modalImg.src = p.image;
+      modalImg.alt = p.name;
+      modalTitle.textContent = p.name;
+
+      const cat = p.category || "Uncategorized";
+      modalCrumbs.textContent = `Home / ${cat} /`;
+      modalCategory.textContent = cat;
+      modalTags.textContent = (p.tags && p.tags.length) ? p.tags.map(t => `#${t}`).join(" ") : "";
+
+      renderBenefitsForProductName(p.name);
+
+      const variants = p.variants || [];
+      variantSelect.innerHTML = variants.map((v, i) => `<option value="${i}">${escapeHtml(v.label)}</option>`).join("");
+
+      variantSelect.value = "0";
+      setModalFromVariantIndex(0);
+
+      document.body.classList.add("modal-open");
+      backdrop.style.display = "flex";
+      backdrop.classList.add("is-open");
+      setTimeout(() => closeModal.focus(), 0);
+    }
+
+    function hideModal(){
+      backdrop.classList.remove("is-open");
+      backdrop.style.display = "none";
+      document.body.classList.remove("modal-open");
+      activeProduct = null;
+    }
+
+    variantSelect.addEventListener("change", () => {
+      const idx = Number(variantSelect.value);
+      if (Number.isFinite(idx)) setModalFromVariantIndex(idx);
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      query = e.target.value;
+      renderGrid();
+    });
+
+    closeModal.addEventListener("click", hideModal);
+
+    backdrop.addEventListener("click", (e) => {
+      if(e.target === backdrop) hideModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape" && backdrop.style.display === "flex") hideModal();
+    });
+
+    renderFilters();
+    renderGrid();
+  </script>
+</body>
+</html>
